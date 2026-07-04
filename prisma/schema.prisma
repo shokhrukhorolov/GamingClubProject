@@ -1,0 +1,119 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PlaceType {
+  SEAT
+  ROOM_UNIT
+}
+
+enum PlaceStatus {
+  ACTIVE
+  INACTIVE
+  MAINTENANCE
+}
+
+enum BookingStatus {
+  ACTIVE
+  CANCELLED
+}
+
+enum BookingSource {
+  CLIENT
+  ADMIN
+}
+
+model Room {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  places Place[]
+
+  @@map("rooms")
+}
+
+model Category {
+  id                  String   @id @default(cuid())
+  name                String   @unique
+  defaultPricePerHour Decimal  @db.Decimal(10, 2)
+  sortOrder           Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  places Place[]
+
+  @@map("categories")
+}
+
+model Place {
+  id           String      @id @default(cuid())
+  name         String
+  type         PlaceType   @default(SEAT)
+  status       PlaceStatus @default(ACTIVE)
+  pricePerHour Decimal     @db.Decimal(10, 2)
+
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  roomId String?
+  room   Room?   @relation(fields: [roomId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@index([categoryId])
+  @@index([roomId])
+  @@map("places")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bookings Booking[]
+
+  @@map("clients")
+}
+
+model Booking {
+  id String @id @default(cuid())
+
+  placeId String
+  place   Place  @relation(fields: [placeId], references: [id], onDelete: Restrict)
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Restrict)
+
+  startsAt DateTime
+  endsAt   DateTime
+
+  pricePerHourSnapshot Decimal @db.Decimal(10, 2)
+  totalPrice           Decimal @db.Decimal(10, 2)
+
+  status BookingStatus @default(ACTIVE)
+  source BookingSource @default(ADMIN)
+
+  cancelledAt  DateTime?
+  cancelReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([placeId, startsAt, endsAt])
+  @@index([clientId])
+  @@index([status])
+  @@map("bookings")
+}

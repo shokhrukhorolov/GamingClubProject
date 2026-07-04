@@ -1,0 +1,54 @@
+// Plain serializable shapes passed from Server Components into Client Components
+// (Prisma Decimal and Date are converted to number / ISO string).
+
+export type CategoryDTO = {
+  id: string;
+  name: string;
+  defaultPricePerHour: number;
+  sortOrder: number;
+  placesCount: number;
+};
+
+export type RoomDTO = {
+  id: string;
+  name: string;
+  description: string | null;
+  placesCount: number;
+};
+
+export type PlaceDTO = {
+  id: string;
+  name: string;
+  type: "SEAT" | "ROOM_UNIT";
+  status: "ACTIVE" | "INACTIVE" | "MAINTENANCE";
+  pricePerHour: number;
+  categoryId: string;
+  categoryName: string;
+  roomId: string | null;
+  roomName: string | null;
+};
+
+export type ClientDTO = {
+  id: string;
+  name: string;
+  phone: string;
+  bookingsCount: number;
+  createdAt: string;
+};
+
+export type BookingDTO = {
+  id: string;
+  placeId: string;
+  placeName: string;
+  roomName: string | null;
+  categoryName: string;
+  clientId: string;
+  clientName: string;
+  clientPhone: string;
+  startsAt: string;
+  endsAt: string;
+  totalPrice: number;
+  status: "ACTIVE" | "CANCELLED";
+  source: "CLIENT" | "ADMIN";
+  cancelReason: string | null;
+};
