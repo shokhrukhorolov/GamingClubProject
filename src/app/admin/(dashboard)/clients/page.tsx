@@ -26,7 +26,7 @@ export default async function ClientsPage({
 
   return (
     <>
-      <PageHeader title="Клиенты" subtitle="Все клиенты клуба и их брони" />
+      <PageHeader title="Clients" subtitle="All club clients and their bookings" />
       <ClientsList
         clients={clients.map((c) => ({
           id: c.id,

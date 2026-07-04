@@ -76,17 +76,17 @@ export function BookingFormModal({
 
   return (
     <>
-      <Modal open={open} onClose={close} title="Новая бронь">
+      <Modal open={open} onClose={close} title="New booking">
         <form action={submit} className="space-y-4">
           <div>
             <div className="mb-1 flex items-center justify-between">
-              <Label htmlFor="bk-client">Клиент</Label>
+              <Label htmlFor="bk-client">Client</Label>
               <button
                 type="button"
                 onClick={() => setCreatingClient(true)}
                 className="text-sm font-medium text-indigo-600 hover:underline cursor-pointer"
               >
-                + Новый клиент
+                + New client
               </button>
             </div>
             <Select
@@ -97,7 +97,7 @@ export function BookingFormModal({
               required
             >
               <option value="" disabled>
-                Выберите клиента...
+                Select a client...
               </option>
               {clients.map((client) => (
                 <option key={client.id} value={client.id}>
@@ -108,7 +108,7 @@ export function BookingFormModal({
           </div>
 
           <div>
-            <Label htmlFor="bk-place">Место</Label>
+            <Label htmlFor="bk-place">Place</Label>
             <Select
               id="bk-place"
               name="placeId"
@@ -120,7 +120,7 @@ export function BookingFormModal({
                 <option key={place.id} value={place.id}>
                   {place.name}
                   {place.roomName ? ` (${place.roomName})` : ""} — {place.categoryName},{" "}
-                  {formatMoney(place.pricePerHour)}/час
+                  {formatMoney(place.pricePerHour)}/hour
                 </option>
               ))}
             </Select>
@@ -128,7 +128,7 @@ export function BookingFormModal({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <Label htmlFor="bk-date">Дата</Label>
+              <Label htmlFor="bk-date">Date</Label>
               <Input
                 id="bk-date"
                 name="date"
@@ -138,7 +138,7 @@ export function BookingFormModal({
               />
             </div>
             <div>
-              <Label htmlFor="bk-time">Время</Label>
+              <Label htmlFor="bk-time">Time</Label>
               <Input
                 id="bk-time"
                 name="time"
@@ -149,7 +149,7 @@ export function BookingFormModal({
               />
             </div>
             <div>
-              <Label htmlFor="bk-duration">Часов</Label>
+              <Label htmlFor="bk-duration">Hours</Label>
               <Select
                 id="bk-duration"
                 name="durationHours"
@@ -167,7 +167,7 @@ export function BookingFormModal({
 
           {price !== null ? (
             <div className="rounded-lg bg-gray-50 px-4 py-3 text-sm">
-              <span className="text-gray-500">Итоговая стоимость: </span>
+              <span className="text-gray-500">Total price: </span>
               <span className="font-semibold text-gray-900">{formatMoney(price)}</span>
             </div>
           ) : null}
@@ -176,10 +176,10 @@ export function BookingFormModal({
 
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={close}>
-              Отмена
+              Cancel
             </Button>
             <Button type="submit" disabled={pending || activePlaces.length === 0}>
-              {pending ? "Создание..." : "Создать бронь"}
+              {pending ? "Creating..." : "Create booking"}
             </Button>
           </div>
         </form>

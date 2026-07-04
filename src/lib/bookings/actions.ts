@@ -9,14 +9,14 @@ import { findConflict, calcTotalPrice } from "@/lib/bookings/availability";
 import { clubTimeToDate } from "@/lib/format";
 
 const createBookingSchema = z.object({
-  placeId: z.string().min(1, "Выберите место"),
-  clientId: z.string().min(1, "Выберите клиента"),
-  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Укажите дату"),
-  time: z.string().regex(/^\d{2}:\d{2}$/, "Укажите время"),
+  placeId: z.string().min(1, "Select a place"),
+  clientId: z.string().min(1, "Select a client"),
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a date"),
+  time: z.string().regex(/^\d{2}:\d{2}$/, "Enter a time"),
   durationHours: z.coerce
     .number()
-    .min(0.5, "Минимальная длительность — 30 минут")
-    .max(24, "Максимальная длительность — 24 часа"),
+    .min(0.5, "Minimum duration is 30 minutes")
+    .max(24, "Maximum duration is 24 hours"),
 });
 
 function revalidate() {
@@ -25,7 +25,7 @@ function revalidate() {
   revalidatePath("/admin/clients");
 }
 
-const CONFLICT_MESSAGE = "Это время уже занято — место забронировано";
+const CONFLICT_MESSAGE = "This time slot is already booked";
 
 function isExclusionViolation(e: unknown): boolean {
   const message = e instanceof Error ? e.message : String(e);
@@ -44,12 +44,12 @@ export async function createBooking(input: unknown): Promise<ActionResult> {
   const endsAt = new Date(startsAt.getTime() + durationHours * 3_600_000);
 
   if (startsAt.getTime() < Date.now() - 5 * 60_000) {
-    return fail("Нельзя создать бронь в прошлом");
+    return fail("Cannot create a booking in the past");
   }
 
   const place = await prisma.place.findUnique({ where: { id: placeId } });
-  if (!place) return fail("Место не найдено");
-  if (place.status !== "ACTIVE") return fail("Это место сейчас недоступно");
+  if (!place) return fail("Place not found");
+  if (place.status !== "ACTIVE") return fail("This place is currently unavailable");
 
   const conflict = await findConflict(placeId, startsAt, endsAt);
   if (conflict) return fail(CONFLICT_MESSAGE);
@@ -86,8 +86,8 @@ export async function cancelBooking(
   await requireAdmin();
 
   const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
-  if (!booking) return fail("Бронь не найдена");
-  if (booking.status === "CANCELLED") return fail("Бронь уже отменена");
+  if (!booking) return fail("Booking not found");
+  if (booking.status === "CANCELLED") return fail("Booking is already cancelled");
 
   await prisma.booking.update({
     where: { id: bookingId },

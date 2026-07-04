@@ -25,7 +25,7 @@ export function BookingsPageClient({
       <div className="mb-4 flex items-start justify-between gap-4">
         <BookingFilters places={places} rooms={rooms} />
         <Button onClick={() => setCreating(true)} className="shrink-0">
-          + Новая бронь
+          + New booking
         </Button>
       </div>
 

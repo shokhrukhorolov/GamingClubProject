@@ -29,7 +29,7 @@ export default async function ClientDetailPage({
     <>
       <div className="mb-4">
         <Link href="/admin/clients" className="text-sm text-indigo-600 hover:underline">
-          ← Все клиенты
+          ← All clients
         </Link>
       </div>
       <ClientDetail

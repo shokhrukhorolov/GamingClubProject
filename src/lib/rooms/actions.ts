@@ -7,7 +7,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { ActionResult, ok, fail } from "@/lib/action-result";
 
 const roomSchema = z.object({
-  name: z.string().trim().min(1, "Укажите название").max(100),
+  name: z.string().trim().min(1, "Name is required").max(100),
   description: z
     .string()
     .trim()
@@ -40,7 +40,7 @@ export async function deleteRoom(id: string): Promise<ActionResult> {
   await requireAdmin();
   const placesCount = await prisma.place.count({ where: { roomId: id } });
   if (placesCount > 0) {
-    return fail(`Нельзя удалить: в комнате ещё ${placesCount} мест(а)`);
+    return fail(`Cannot delete: room still has ${placesCount} place(s)`);
   }
   await prisma.room.delete({ where: { id } });
   revalidatePath("/admin/rooms");

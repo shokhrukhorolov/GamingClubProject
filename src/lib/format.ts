@@ -1,19 +1,18 @@
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
-import { ru } from "date-fns/locale";
 
 /** All dates in the app are displayed and entered in the club's local timezone. */
 export const CLUB_TIMEZONE = "Asia/Tashkent";
 
 export function formatMoney(amount: number): string {
-  return `${new Intl.NumberFormat("ru-RU").format(amount)} сум`;
+  return `${new Intl.NumberFormat("en-US").format(amount)} UZS`;
 }
 
 export function formatDate(date: Date): string {
-  return formatInTimeZone(date, CLUB_TIMEZONE, "d MMM yyyy", { locale: ru });
+  return formatInTimeZone(date, CLUB_TIMEZONE, "d MMM yyyy");
 }
 
 export function formatDateTime(date: Date): string {
-  return formatInTimeZone(date, CLUB_TIMEZONE, "d MMM yyyy, HH:mm", { locale: ru });
+  return formatInTimeZone(date, CLUB_TIMEZONE, "d MMM yyyy, HH:mm");
 }
 
 export function formatTime(date: Date): string {

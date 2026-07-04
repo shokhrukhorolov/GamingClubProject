@@ -22,15 +22,15 @@ export function ClientDetail({
         <div>
           <div className="text-lg font-semibold text-gray-900">{client.name}</div>
           <div className="text-sm text-gray-500">
-            {client.phone} · клиент с {formatDate(new Date(client.createdAt))}
+            {client.phone} · client since {formatDate(new Date(client.createdAt))}
           </div>
         </div>
         <Button variant="secondary" onClick={() => setEditing(true)}>
-          Изменить
+          Edit
         </Button>
       </div>
 
-      <h2 className="mb-3 text-base font-semibold text-gray-900">История броней</h2>
+      <h2 className="mb-3 text-base font-semibold text-gray-900">Booking history</h2>
       <BookingsTable bookings={bookings} showClient={false} />
 
       <ClientFormModal open={editing} onClose={() => setEditing(false)} client={client} />

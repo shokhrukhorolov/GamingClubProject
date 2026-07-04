@@ -7,11 +7,11 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 import { ActionResult, ok, fail } from "@/lib/action-result";
 
 const placeSchema = z.object({
-  name: z.string().trim().min(1, "Укажите название").max(100),
+  name: z.string().trim().min(1, "Name is required").max(100),
   type: z.enum(["SEAT", "ROOM_UNIT"]),
   status: z.enum(["ACTIVE", "INACTIVE", "MAINTENANCE"]),
-  pricePerHour: z.coerce.number().positive("Цена должна быть больше нуля"),
-  categoryId: z.string().min(1, "Выберите категорию"),
+  pricePerHour: z.coerce.number().positive("Price must be greater than zero"),
+  categoryId: z.string().min(1, "Select a category"),
   roomId: z
     .string()
     .optional()
@@ -59,7 +59,7 @@ export async function deletePlace(id: string): Promise<ActionResult> {
   const bookingsCount = await prisma.booking.count({ where: { placeId: id } });
   if (bookingsCount > 0) {
     return fail(
-      `Нельзя удалить: у места ${bookingsCount} брон(ей). Отключите место вместо удаления.`
+      `Cannot delete: place has ${bookingsCount} booking(s). Disable it instead.`
     );
   }
   await prisma.place.delete({ where: { id } });

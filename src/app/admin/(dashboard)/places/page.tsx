@@ -17,8 +17,8 @@ export default async function PlacesPage() {
   return (
     <>
       <PageHeader
-        title="Места"
-        subtitle="Все бронируемые места и комнаты клуба"
+        title="Places"
+        subtitle="All bookable seats and rooms of the club"
       />
       <PlacesManager
         places={places.map((p) => ({

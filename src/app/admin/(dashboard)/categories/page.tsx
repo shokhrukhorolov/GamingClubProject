@@ -13,8 +13,8 @@ export default async function CategoriesPage() {
   return (
     <>
       <PageHeader
-        title="Категории"
-        subtitle="Тарифные категории мест: Standard, Premium, VIP"
+        title="Categories"
+        subtitle="Pricing tiers: Standard, Premium, VIP"
       />
       <CategoriesManager
         categories={categories.map((c) => ({

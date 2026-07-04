@@ -48,14 +48,14 @@ export function ClientFormModal({
   };
 
   return (
-    <Modal open={open} onClose={close} title={client ? "Изменить клиента" : "Новый клиент"}>
+    <Modal open={open} onClose={close} title={client ? "Edit client" : "New client"}>
       <form action={submit} className="space-y-4">
         <div>
-          <Label htmlFor="client-name">Имя</Label>
+          <Label htmlFor="client-name">Name</Label>
           <Input id="client-name" name="name" defaultValue={client?.name} required />
         </div>
         <div>
-          <Label htmlFor="client-phone">Телефон</Label>
+          <Label htmlFor="client-phone">Phone</Label>
           <Input
             id="client-phone"
             name="phone"
@@ -68,10 +68,10 @@ export function ClientFormModal({
         <FieldError message={error} />
         <div className="flex justify-end gap-2 pt-2">
           <Button type="button" variant="secondary" onClick={close}>
-            Отмена
+            Cancel
           </Button>
           <Button type="submit" disabled={pending}>
-            {pending ? "Сохранение..." : "Сохранить"}
+            {pending ? "Saving..." : "Save"}
           </Button>
         </div>
       </form>

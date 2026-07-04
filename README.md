@@ -1,36 +1,36 @@
-# Gaming Club — система бронирования
+# Gaming Club — Booking System
 
-MVP системы онлайн-бронирования мест для игрового клуба. Админ-панель: календарь броней, управление бронями, местами, категориями, комнатами и клиентами.
+MVP of an online seat booking system for a gaming club. Admin panel: booking calendar, booking management, places, categories, rooms, and clients.
 
-## Стек
+## Stack
 
 - **Next.js 16** (App Router, TypeScript) + Tailwind CSS
 - **PostgreSQL** (Neon) + Prisma 7
-- Деплой: **Vercel**
+- Deployment: **Vercel**
 
-## Запуск локально
+## Local setup
 
 ```bash
 npm install
-cp .env.example .env   # заполнить DATABASE_URL и остальные переменные
+cp .env.example .env   # fill in DATABASE_URL and the other variables
 npx prisma migrate deploy
-npm run db:seed        # тестовые данные
+npm run db:seed        # demo data
 npm run dev
 ```
 
-Админ-панель: `http://localhost:3000/admin` (логин/пароль из `.env`).
+Admin panel: `http://localhost:3000/admin` (credentials from `.env`).
 
-## Переменные окружения
+## Environment variables
 
-| Переменная | Описание |
+| Variable | Description |
 |---|---|
-| `DATABASE_URL` | Строка подключения Neon Postgres |
-| `ADMIN_USERNAME` | Логин администратора |
-| `ADMIN_PASSWORD` | Пароль администратора |
-| `SESSION_SECRET` | Случайная строка 32+ символов для подписи cookie |
+| `DATABASE_URL` | Neon Postgres connection string |
+| `ADMIN_USERNAME` | Admin login |
+| `ADMIN_PASSWORD` | Admin password |
+| `SESSION_SECRET` | Random 32+ char string used to sign the session cookie |
 
-## Защита от двойных броней
+## Double-booking protection
 
-Пересечение активных броней по одному месту запрещено на уровне БД
-(exclusion constraint `no_overlapping_active_bookings`, расширение `btree_gist`) —
-плюс дружелюбная проверка на уровне приложения.
+Overlapping active bookings for the same place are impossible at the database level
+(exclusion constraint `no_overlapping_active_bookings` using the `btree_gist` extension),
+backed by a friendly application-level availability check.

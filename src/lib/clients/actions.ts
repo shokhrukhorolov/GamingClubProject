@@ -8,13 +8,13 @@ import { ActionResult, ok, fail } from "@/lib/action-result";
 import { Prisma } from "@/generated/prisma/client";
 
 const clientSchema = z.object({
-  name: z.string().trim().min(1, "Укажите имя").max(150),
+  name: z.string().trim().min(1, "Name is required").max(150),
   phone: z
     .string()
     .trim()
-    .min(7, "Укажите номер телефона")
+    .min(7, "Phone number is required")
     .max(20)
-    .regex(/^\+?[\d\s\-()]+$/, "Некорректный номер телефона"),
+    .regex(/^\+?[\d\s\-()]+$/, "Invalid phone number"),
 });
 
 export async function createClient(
@@ -30,7 +30,7 @@ export async function createClient(
     return ok({ id: client.id });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-      return fail("Клиент с таким номером телефона уже существует");
+      return fail("A client with this phone number already exists");
     }
     throw e;
   }
@@ -45,7 +45,7 @@ export async function updateClient(id: string, input: unknown): Promise<ActionRe
     await prisma.client.update({ where: { id }, data: parsed.data });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-      return fail("Клиент с таким номером телефона уже существует");
+      return fail("A client with this phone number already exists");
     }
     throw e;
   }

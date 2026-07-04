@@ -12,14 +12,14 @@ import { Table, THead, TH, TBody, TD, EmptyRow } from "@/components/ui/table";
 import { formatMoney } from "@/lib/format";
 
 const statusLabels: Record<PlaceDTO["status"], { label: string; tone: "green" | "gray" | "yellow" }> = {
-  ACTIVE: { label: "Активно", tone: "green" },
-  INACTIVE: { label: "Отключено", tone: "gray" },
-  MAINTENANCE: { label: "Ремонт", tone: "yellow" },
+  ACTIVE: { label: "Active", tone: "green" },
+  INACTIVE: { label: "Disabled", tone: "gray" },
+  MAINTENANCE: { label: "Maintenance", tone: "yellow" },
 };
 
 const typeLabels: Record<PlaceDTO["type"], string> = {
-  SEAT: "Место",
-  ROOM_UNIT: "Комната целиком",
+  SEAT: "Seat",
+  ROOM_UNIT: "Whole room",
 };
 
 export function PlacesManager({
@@ -68,7 +68,7 @@ export function PlacesManager({
   };
 
   const remove = (place: PlaceDTO) => {
-    if (!confirm(`Удалить место «${place.name}»? Обычно достаточно отключить его.`)) return;
+    if (!confirm(`Delete place "${place.name}"? Usually disabling it is enough.`)) return;
     startTransition(async () => {
       const result = await deletePlace(place.id);
       if (!result.ok) alert(result.error);
@@ -81,29 +81,29 @@ export function PlacesManager({
     <>
       <div className="mb-4 flex justify-end">
         <Button onClick={() => setEditing("new")} disabled={categories.length === 0}>
-          + Новое место
+          + New place
         </Button>
       </div>
 
       {categories.length === 0 ? (
         <p className="mb-4 rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-          Сначала создайте хотя бы одну категорию.
+          Create at least one category first.
         </p>
       ) : null}
 
       <Table>
         <THead>
-          <TH>Название</TH>
-          <TH>Тип</TH>
-          <TH>Категория</TH>
-          <TH>Комната</TH>
-          <TH>Цена</TH>
-          <TH>Статус</TH>
+          <TH>Name</TH>
+          <TH>Type</TH>
+          <TH>Category</TH>
+          <TH>Room</TH>
+          <TH>Price</TH>
+          <TH>Status</TH>
           <TH />
         </THead>
         <TBody>
           {places.length === 0 ? (
-            <EmptyRow colSpan={7} message="Мест пока нет" />
+            <EmptyRow colSpan={7} message="No places yet" />
           ) : (
             places.map((place) => {
               const status = statusLabels[place.status];
@@ -113,17 +113,17 @@ export function PlacesManager({
                   <TD>{typeLabels[place.type]}</TD>
                   <TD>{place.categoryName}</TD>
                   <TD>{place.roomName ?? "—"}</TD>
-                  <TD>{formatMoney(place.pricePerHour)}/час</TD>
+                  <TD>{formatMoney(place.pricePerHour)}/hour</TD>
                   <TD>
                     <Badge tone={status.tone}>{status.label}</Badge>
                   </TD>
                   <TD className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button variant="ghost" onClick={() => toggleStatus(place)} disabled={pending}>
-                        {place.status === "ACTIVE" ? "Отключить" : "Включить"}
+                        {place.status === "ACTIVE" ? "Disable" : "Enable"}
                       </Button>
                       <Button variant="ghost" onClick={() => setEditing(place)}>
-                        Изменить
+                        Edit
                       </Button>
                       <Button
                         variant="ghost"
@@ -131,7 +131,7 @@ export function PlacesManager({
                         onClick={() => remove(place)}
                         disabled={pending}
                       >
-                        Удалить
+                        Delete
                       </Button>
                     </div>
                   </TD>
@@ -145,38 +145,38 @@ export function PlacesManager({
       <Modal
         open={editing !== null}
         onClose={close}
-        title={editing === "new" ? "Новое место" : "Изменить место"}
+        title={editing === "new" ? "New place" : "Edit place"}
       >
         <form action={submit} className="space-y-4">
           <div>
-            <Label htmlFor="place-name">Название</Label>
+            <Label htmlFor="place-name">Name</Label>
             <Input
               id="place-name"
               name="name"
-              placeholder="Место 1 / VIP Комната A"
+              placeholder="Seat 1 / VIP Room A"
               defaultValue={current?.name}
               required
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="place-type">Тип</Label>
+              <Label htmlFor="place-type">Type</Label>
               <Select id="place-type" name="type" defaultValue={current?.type ?? "SEAT"}>
-                <option value="SEAT">Место</option>
-                <option value="ROOM_UNIT">Комната целиком</option>
+                <option value="SEAT">Seat</option>
+                <option value="ROOM_UNIT">Whole room</option>
               </Select>
             </div>
             <div>
-              <Label htmlFor="place-status">Статус</Label>
+              <Label htmlFor="place-status">Status</Label>
               <Select id="place-status" name="status" defaultValue={current?.status ?? "ACTIVE"}>
-                <option value="ACTIVE">Активно</option>
-                <option value="INACTIVE">Отключено</option>
-                <option value="MAINTENANCE">Ремонт</option>
+                <option value="ACTIVE">Active</option>
+                <option value="INACTIVE">Disabled</option>
+                <option value="MAINTENANCE">Maintenance</option>
               </Select>
             </div>
           </div>
           <div>
-            <Label htmlFor="place-category">Категория</Label>
+            <Label htmlFor="place-category">Category</Label>
             <Select
               id="place-category"
               name="categoryId"
@@ -191,9 +191,9 @@ export function PlacesManager({
             </Select>
           </div>
           <div>
-            <Label htmlFor="place-room">Комната (необязательно)</Label>
+            <Label htmlFor="place-room">Room (optional)</Label>
             <Select id="place-room" name="roomId" defaultValue={current?.roomId ?? ""}>
-              <option value="">Без комнаты</option>
+              <option value="">No room</option>
               {rooms.map((room) => (
                 <option key={room.id} value={room.id}>
                   {room.name}
@@ -202,7 +202,7 @@ export function PlacesManager({
             </Select>
           </div>
           <div>
-            <Label htmlFor="place-price">Цена (сум/час)</Label>
+            <Label htmlFor="place-price">Price (UZS/hour)</Label>
             <Input
               id="place-price"
               name="pricePerHour"
@@ -216,10 +216,10 @@ export function PlacesManager({
           <FieldError message={error} />
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={close}>
-              Отмена
+              Cancel
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending ? "Сохранение..." : "Сохранить"}
+              {pending ? "Saving..." : "Save"}
             </Button>
           </div>
         </form>

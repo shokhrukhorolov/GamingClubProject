@@ -30,7 +30,7 @@ export function BookingFilters({
   return (
     <div className="mb-4 flex flex-wrap items-end gap-3">
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">Дата</label>
+        <label className="mb-1 block text-xs font-medium text-gray-500">Date</label>
         <Input
           type="date"
           value={searchParams.get("date") ?? ""}
@@ -39,13 +39,13 @@ export function BookingFilters({
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">Место</label>
+        <label className="mb-1 block text-xs font-medium text-gray-500">Place</label>
         <Select
           value={searchParams.get("placeId") ?? ""}
           onChange={(e) => setParam("placeId", e.target.value)}
           className="w-48"
         >
-          <option value="">Все места</option>
+          <option value="">All places</option>
           {places.map((place) => (
             <option key={place.id} value={place.id}>
               {place.name}
@@ -54,13 +54,13 @@ export function BookingFilters({
         </Select>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">Комната</label>
+        <label className="mb-1 block text-xs font-medium text-gray-500">Room</label>
         <Select
           value={searchParams.get("roomId") ?? ""}
           onChange={(e) => setParam("roomId", e.target.value)}
           className="w-44"
         >
-          <option value="">Все комнаты</option>
+          <option value="">All rooms</option>
           {rooms.map((room) => (
             <option key={room.id} value={room.id}>
               {room.name}
@@ -69,20 +69,20 @@ export function BookingFilters({
         </Select>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">Статус</label>
+        <label className="mb-1 block text-xs font-medium text-gray-500">Status</label>
         <Select
           value={searchParams.get("status") ?? ""}
           onChange={(e) => setParam("status", e.target.value)}
           className="w-40"
         >
-          <option value="">Все</option>
-          <option value="ACTIVE">Активные</option>
-          <option value="CANCELLED">Отменённые</option>
+          <option value="">All</option>
+          <option value="ACTIVE">Active</option>
+          <option value="CANCELLED">Cancelled</option>
         </Select>
       </div>
       {hasFilters ? (
         <Button variant="ghost" onClick={() => router.push("/admin/bookings")}>
-          Сбросить
+          Reset
         </Button>
       ) : null}
     </div>

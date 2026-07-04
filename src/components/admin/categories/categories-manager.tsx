@@ -36,7 +36,7 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
   };
 
   const remove = (category: CategoryDTO) => {
-    if (!confirm(`Удалить категорию «${category.name}»?`)) return;
+    if (!confirm(`Delete category "${category.name}"?`)) return;
     startTransition(async () => {
       const result = await deleteCategory(category.id);
       if (!result.ok) alert(result.error);
@@ -48,29 +48,29 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
   return (
     <>
       <div className="mb-4 flex justify-end">
-        <Button onClick={() => setEditing("new")}>+ Новая категория</Button>
+        <Button onClick={() => setEditing("new")}>+ New category</Button>
       </div>
 
       <Table>
         <THead>
-          <TH>Название</TH>
-          <TH>Цена по умолчанию</TH>
-          <TH>Мест</TH>
+          <TH>Name</TH>
+          <TH>Default price</TH>
+          <TH>Places</TH>
           <TH />
         </THead>
         <TBody>
           {categories.length === 0 ? (
-            <EmptyRow colSpan={4} message="Категорий пока нет" />
+            <EmptyRow colSpan={4} message="No categories yet" />
           ) : (
             categories.map((category) => (
               <tr key={category.id} className="hover:bg-gray-50">
                 <TD className="font-medium text-gray-900">{category.name}</TD>
-                <TD>{formatMoney(category.defaultPricePerHour)}/час</TD>
+                <TD>{formatMoney(category.defaultPricePerHour)}/hour</TD>
                 <TD>{category.placesCount}</TD>
                 <TD className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" onClick={() => setEditing(category)}>
-                      Изменить
+                      Edit
                     </Button>
                     <Button
                       variant="ghost"
@@ -78,7 +78,7 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
                       onClick={() => remove(category)}
                       disabled={pending}
                     >
-                      Удалить
+                      Delete
                     </Button>
                   </div>
                 </TD>
@@ -91,15 +91,15 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
       <Modal
         open={editing !== null}
         onClose={close}
-        title={editing === "new" ? "Новая категория" : "Изменить категорию"}
+        title={editing === "new" ? "New category" : "Edit category"}
       >
         <form action={submit} className="space-y-4">
           <div>
-            <Label htmlFor="cat-name">Название</Label>
+            <Label htmlFor="cat-name">Name</Label>
             <Input id="cat-name" name="name" defaultValue={current?.name} required />
           </div>
           <div>
-            <Label htmlFor="cat-price">Цена по умолчанию (сум/час)</Label>
+            <Label htmlFor="cat-price">Default price (UZS/hour)</Label>
             <Input
               id="cat-price"
               name="defaultPricePerHour"
@@ -111,7 +111,7 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
             />
           </div>
           <div>
-            <Label htmlFor="cat-sort">Порядок сортировки</Label>
+            <Label htmlFor="cat-sort">Sort order</Label>
             <Input
               id="cat-sort"
               name="sortOrder"
@@ -122,10 +122,10 @@ export function CategoriesManager({ categories }: { categories: CategoryDTO[] })
           <FieldError message={error} />
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={close}>
-              Отмена
+              Cancel
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending ? "Сохранение..." : "Сохранить"}
+              {pending ? "Saving..." : "Save"}
             </Button>
           </div>
         </form>

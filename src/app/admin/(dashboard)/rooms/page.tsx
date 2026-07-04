@@ -13,8 +13,8 @@ export default async function RoomsPage() {
   return (
     <>
       <PageHeader
-        title="Комнаты"
-        subtitle="Физические зоны клуба, в которых расположены места"
+        title="Rooms"
+        subtitle="Physical zones of the club that contain places"
       />
       <RoomsManager
         rooms={rooms.map((r) => ({

@@ -49,7 +49,7 @@ export default async function BookingsPage({
 
   return (
     <>
-      <PageHeader title="Брони" subtitle="Все брони клуба с фильтрами" />
+      <PageHeader title="Bookings" subtitle="All club bookings with filters" />
       <BookingsPageClient
         bookings={bookings.map(toBookingDTO)}
         places={places.map(toPlaceDTO)}

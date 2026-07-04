@@ -98,16 +98,16 @@ export function CalendarView({ date, dayStartISO, places, bookings, clients }: P
           variant="ghost"
           onClick={() => router.push("/admin/calendar")}
         >
-          Сегодня
+          Today
         </Button>
         <div className="ml-auto text-sm text-gray-500">
-          Клик по свободной ячейке — новая бронь
+          Click an empty cell to create a booking
         </div>
       </div>
 
       {places.length === 0 ? (
         <p className="rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-          Нет активных мест. Добавьте места в разделе «Места».
+          No active places. Add places in the "Places" section.
         </p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
@@ -206,41 +206,41 @@ export function CalendarView({ date, dayStartISO, places, bookings, clients }: P
           setSelected(null);
           setCancelError(undefined);
         }}
-        title="Бронь"
+        title="Booking"
       >
         {selected ? (
           <div className="space-y-4">
             <div className="space-y-1.5 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Место</span>
+                <span className="text-gray-500">Place</span>
                 <span className="font-medium text-gray-900">
                   {selected.placeName}
                   {selected.roomName ? ` (${selected.roomName})` : ""}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Клиент</span>
+                <span className="text-gray-500">Client</span>
                 <span className="font-medium text-gray-900">
                   {selected.clientName} · {selected.clientPhone}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Время</span>
+                <span className="text-gray-500">Time</span>
                 <span className="font-medium text-gray-900">
                   {formatDateTime(new Date(selected.startsAt))} —{" "}
                   {formatTime(new Date(selected.endsAt))}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Стоимость</span>
+                <span className="text-gray-500">Price</span>
                 <span className="font-medium text-gray-900">
                   {formatMoney(selected.totalPrice)}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Статус</span>
+                <span className="text-gray-500">Status</span>
                 <Badge tone={selected.status === "ACTIVE" ? "green" : "red"}>
-                  {selected.status === "ACTIVE" ? "Активна" : "Отменена"}
+                  {selected.status === "ACTIVE" ? "Active" : "Cancelled"}
                 </Badge>
               </div>
             </div>
@@ -248,13 +248,13 @@ export function CalendarView({ date, dayStartISO, places, bookings, clients }: P
             {selected.status === "ACTIVE" ? (
               <form action={submitCancel} className="space-y-3 border-t border-gray-100 pt-4">
                 <div>
-                  <Label htmlFor="cal-cancel-reason">Причина отмены (необязательно)</Label>
+                  <Label htmlFor="cal-cancel-reason">Cancellation reason (optional)</Label>
                   <Textarea id="cal-cancel-reason" name="reason" rows={2} />
                 </div>
                 <FieldError message={cancelError} />
                 <div className="flex justify-end">
                   <Button type="submit" variant="danger" disabled={pending}>
-                    {pending ? "Отмена..." : "Отменить бронь"}
+                    {pending ? "Cancelling..." : "Cancel booking"}
                   </Button>
                 </div>
               </form>

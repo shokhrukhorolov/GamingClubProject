@@ -13,7 +13,7 @@ export default async function LoginPage({
             GC
           </div>
           <h1 className="text-xl font-semibold text-gray-900">Gaming Club</h1>
-          <p className="text-sm text-gray-500">Панель администратора</p>
+          <p className="text-sm text-gray-500">Admin Panel</p>
         </div>
 
         <form
@@ -25,13 +25,13 @@ export default async function LoginPage({
 
           {error ? (
             <div className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
-              Неверный логин или пароль
+              Invalid username or password
             </div>
           ) : null}
 
           <div>
             <label htmlFor="username" className="mb-1 block text-sm font-medium text-gray-700">
-              Логин
+              Username
             </label>
             <input
               id="username"
@@ -44,7 +44,7 @@ export default async function LoginPage({
 
           <div>
             <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-              Пароль
+              Password
             </label>
             <input
               id="password"
@@ -60,7 +60,7 @@ export default async function LoginPage({
             type="submit"
             className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500 cursor-pointer"
           >
-            Войти
+            Sign in
           </button>
         </form>
       </div>

@@ -26,27 +26,27 @@ export function ClientsList({ clients }: { clients: ClientDTO[] }) {
         <form action={onSearch} className="flex items-center gap-2">
           <Input
             name="q"
-            placeholder="Поиск по имени или телефону..."
+            placeholder="Search by name or phone..."
             defaultValue={searchParams.get("q") ?? ""}
             className="w-72"
           />
           <Button type="submit" variant="secondary">
-            Найти
+            Search
           </Button>
         </form>
-        <Button onClick={() => setCreating(true)}>+ Новый клиент</Button>
+        <Button onClick={() => setCreating(true)}>+ New client</Button>
       </div>
 
       <Table>
         <THead>
-          <TH>Имя</TH>
-          <TH>Телефон</TH>
-          <TH>Броней</TH>
-          <TH>Зарегистрирован</TH>
+          <TH>Name</TH>
+          <TH>Phone</TH>
+          <TH>Bookings</TH>
+          <TH>Registered</TH>
         </THead>
         <TBody>
           {clients.length === 0 ? (
-            <EmptyRow colSpan={4} message="Клиенты не найдены" />
+            <EmptyRow colSpan={4} message="No clients found" />
           ) : (
             clients.map((client) => (
               <tr key={client.id} className="hover:bg-gray-50">

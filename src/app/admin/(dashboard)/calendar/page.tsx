@@ -40,7 +40,7 @@ export default async function CalendarPage({
 
   return (
     <>
-      <PageHeader title="Календарь" subtitle="Расписание броней по всем местам" />
+      <PageHeader title="Calendar" subtitle="Booking schedule across all places" />
       <CalendarView
         date={date}
         dayStartISO={dayStart.toISOString()}

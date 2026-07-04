@@ -34,7 +34,7 @@ export function RoomsManager({ rooms }: { rooms: RoomDTO[] }) {
   };
 
   const remove = (room: RoomDTO) => {
-    if (!confirm(`Удалить комнату «${room.name}»?`)) return;
+    if (!confirm(`Delete room "${room.name}"?`)) return;
     startTransition(async () => {
       const result = await deleteRoom(room.id);
       if (!result.ok) alert(result.error);
@@ -46,19 +46,19 @@ export function RoomsManager({ rooms }: { rooms: RoomDTO[] }) {
   return (
     <>
       <div className="mb-4 flex justify-end">
-        <Button onClick={() => setEditing("new")}>+ Новая комната</Button>
+        <Button onClick={() => setEditing("new")}>+ New room</Button>
       </div>
 
       <Table>
         <THead>
-          <TH>Название</TH>
-          <TH>Описание</TH>
-          <TH>Мест</TH>
+          <TH>Name</TH>
+          <TH>Description</TH>
+          <TH>Places</TH>
           <TH />
         </THead>
         <TBody>
           {rooms.length === 0 ? (
-            <EmptyRow colSpan={4} message="Комнат пока нет" />
+            <EmptyRow colSpan={4} message="No rooms yet" />
           ) : (
             rooms.map((room) => (
               <tr key={room.id} className="hover:bg-gray-50">
@@ -68,7 +68,7 @@ export function RoomsManager({ rooms }: { rooms: RoomDTO[] }) {
                 <TD className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" onClick={() => setEditing(room)}>
-                      Изменить
+                      Edit
                     </Button>
                     <Button
                       variant="ghost"
@@ -76,7 +76,7 @@ export function RoomsManager({ rooms }: { rooms: RoomDTO[] }) {
                       onClick={() => remove(room)}
                       disabled={pending}
                     >
-                      Удалить
+                      Delete
                     </Button>
                   </div>
                 </TD>
@@ -89,15 +89,15 @@ export function RoomsManager({ rooms }: { rooms: RoomDTO[] }) {
       <Modal
         open={editing !== null}
         onClose={close}
-        title={editing === "new" ? "Новая комната" : "Изменить комнату"}
+        title={editing === "new" ? "New room" : "Edit room"}
       >
         <form action={submit} className="space-y-4">
           <div>
-            <Label htmlFor="room-name">Название</Label>
+            <Label htmlFor="room-name">Name</Label>
             <Input id="room-name" name="name" defaultValue={current?.name} required />
           </div>
           <div>
-            <Label htmlFor="room-desc">Описание</Label>
+            <Label htmlFor="room-desc">Description</Label>
             <Textarea
               id="room-desc"
               name="description"
@@ -108,10 +108,10 @@ export function RoomsManager({ rooms }: { rooms: RoomDTO[] }) {
           <FieldError message={error} />
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={close}>
-              Отмена
+              Cancel
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending ? "Сохранение..." : "Сохранить"}
+              {pending ? "Saving..." : "Save"}
             </Button>
           </div>
         </form>

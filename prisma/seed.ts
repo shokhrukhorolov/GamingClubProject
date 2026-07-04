@@ -42,15 +42,15 @@ async function main() {
   ]);
 
   const mainHall = await prisma.room.create({
-    data: { name: "Главный зал", description: "Общий зал со стандартными и премиум местами" },
+    data: { name: "Main Hall", description: "Shared hall with Standard and Premium seats" },
   });
   const vipRoom = await prisma.room.create({
-    data: { name: "VIP зона", description: "Отдельные VIP комнаты" },
+    data: { name: "VIP Zone", description: "Private VIP rooms" },
   });
 
   const seatData = [
     ...Array.from({ length: 6 }, (_, i) => ({
-      name: `Место ${i + 1}`,
+      name: `Seat ${i + 1}`,
       type: "SEAT" as const,
       pricePerHour: 15000,
       categoryId: standard.id,
@@ -64,7 +64,7 @@ async function main() {
       roomId: mainHall.id,
     })),
     ...Array.from({ length: 2 }, (_, i) => ({
-      name: `VIP Комната ${i + 1}`,
+      name: `VIP Room ${i + 1}`,
       type: "ROOM_UNIT" as const,
       pricePerHour: 50000,
       categoryId: vip.id,
@@ -79,11 +79,11 @@ async function main() {
 
   const clients = [];
   for (const data of [
-    { name: "Азиз Каримов", phone: "+998901234567" },
-    { name: "Тимур Рахимов", phone: "+998907654321" },
-    { name: "Джасур Юсупов", phone: "+998933217654" },
-    { name: "Санжар Алимов", phone: "+998971112233" },
-    { name: "Отабек Насыров", phone: "+998905556677" },
+    { name: "Aziz Karimov", phone: "+998901234567" },
+    { name: "Timur Rakhimov", phone: "+998907654321" },
+    { name: "Jasur Yusupov", phone: "+998933217654" },
+    { name: "Sanjar Alimov", phone: "+998971112233" },
+    { name: "Otabek Nasirov", phone: "+998905556677" },
   ]) {
     clients.push(await prisma.client.create({ data }));
   }
@@ -130,12 +130,12 @@ async function main() {
       status: "CANCELLED",
       source: "ADMIN",
       cancelledAt: new Date(),
-      cancelReason: "Клиент не пришёл",
+      cancelReason: "No-show",
     },
   });
 
   console.log(
-    `Done: ${places.length} мест, ${clients.length} клиентов, ${bookingSpecs.length + 1} броней`
+    `Done: ${places.length} places, ${clients.length} clients, ${bookingSpecs.length + 1} bookings`
   );
 }
 

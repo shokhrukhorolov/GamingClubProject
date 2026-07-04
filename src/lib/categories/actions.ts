@@ -8,8 +8,8 @@ import { ActionResult, ok, fail } from "@/lib/action-result";
 import { Prisma } from "@/generated/prisma/client";
 
 const categorySchema = z.object({
-  name: z.string().trim().min(1, "Укажите название").max(100),
-  defaultPricePerHour: z.coerce.number().positive("Цена должна быть больше нуля"),
+  name: z.string().trim().min(1, "Name is required").max(100),
+  defaultPricePerHour: z.coerce.number().positive("Price must be greater than zero"),
   sortOrder: z.coerce.number().int().default(0),
 });
 
@@ -22,7 +22,7 @@ export async function createCategory(input: unknown): Promise<ActionResult> {
     await prisma.category.create({ data: parsed.data });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-      return fail("Категория с таким названием уже существует");
+      return fail("A category with this name already exists");
     }
     throw e;
   }
@@ -39,7 +39,7 @@ export async function updateCategory(id: string, input: unknown): Promise<Action
     await prisma.category.update({ where: { id }, data: parsed.data });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
-      return fail("Категория с таким названием уже существует");
+      return fail("A category with this name already exists");
     }
     throw e;
   }
@@ -51,7 +51,7 @@ export async function deleteCategory(id: string): Promise<ActionResult> {
   await requireAdmin();
   const placesCount = await prisma.place.count({ where: { categoryId: id } });
   if (placesCount > 0) {
-    return fail(`Нельзя удалить: в категории ещё ${placesCount} мест(а)`);
+    return fail(`Cannot delete: category still has ${placesCount} place(s)`);
   }
   await prisma.category.delete({ where: { id } });
   revalidatePath("/admin/categories");

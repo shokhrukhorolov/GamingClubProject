@@ -43,16 +43,16 @@ export function BookingsTable({
     <>
       <Table>
         <THead>
-          <TH>Место</TH>
-          {showClient ? <TH>Клиент</TH> : null}
-          <TH>Время</TH>
-          <TH>Стоимость</TH>
-          <TH>Статус</TH>
+          <TH>Place</TH>
+          {showClient ? <TH>Client</TH> : null}
+          <TH>Time</TH>
+          <TH>Price</TH>
+          <TH>Status</TH>
           <TH />
         </THead>
         <TBody>
           {bookings.length === 0 ? (
-            <EmptyRow colSpan={colSpan} message="Броней не найдено" />
+            <EmptyRow colSpan={colSpan} message="No bookings found" />
           ) : (
             bookings.map((booking) => (
               <tr key={booking.id} className="hover:bg-gray-50">
@@ -77,7 +77,7 @@ export function BookingsTable({
                 <TD>
                   <div>{formatDateTime(new Date(booking.startsAt))}</div>
                   <div className="text-xs text-gray-500">
-                    до {formatTime(new Date(booking.endsAt))}
+                    until {formatTime(new Date(booking.endsAt))}
                   </div>
                 </TD>
                 <TD className="font-medium text-gray-900">
@@ -85,10 +85,10 @@ export function BookingsTable({
                 </TD>
                 <TD>
                   {booking.status === "ACTIVE" ? (
-                    <Badge tone="green">Активна</Badge>
+                    <Badge tone="green">Active</Badge>
                   ) : (
                     <div>
-                      <Badge tone="red">Отменена</Badge>
+                      <Badge tone="red">Cancelled</Badge>
                       {booking.cancelReason ? (
                         <div className="mt-1 text-xs text-gray-400">{booking.cancelReason}</div>
                       ) : null}
@@ -102,7 +102,7 @@ export function BookingsTable({
                       className="text-red-600 hover:bg-red-50"
                       onClick={() => setCancelling(booking)}
                     >
-                      Отменить
+                      Cancel
                     </Button>
                   ) : null}
                 </TD>
@@ -112,7 +112,7 @@ export function BookingsTable({
         </TBody>
       </Table>
 
-      <Modal open={cancelling !== null} onClose={close} title="Отменить бронь?">
+      <Modal open={cancelling !== null} onClose={close} title="Cancel booking?">
         {cancelling ? (
           <form action={submitCancel} className="space-y-4">
             <p className="text-sm text-gray-600">
@@ -120,16 +120,16 @@ export function BookingsTable({
               {cancelling.clientName}
             </p>
             <div>
-              <Label htmlFor="cancel-reason">Причина (необязательно)</Label>
+              <Label htmlFor="cancel-reason">Reason (optional)</Label>
               <Textarea id="cancel-reason" name="reason" rows={2} />
             </div>
             <FieldError message={error} />
             <div className="flex justify-end gap-2 pt-2">
               <Button type="button" variant="secondary" onClick={close}>
-                Не отменять
+                Keep booking
               </Button>
               <Button type="submit" variant="danger" disabled={pending}>
-                {pending ? "Отмена..." : "Отменить бронь"}
+                {pending ? "Cancelling..." : "Cancel booking"}
               </Button>
             </div>
           </form>
