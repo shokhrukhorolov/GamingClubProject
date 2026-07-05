@@ -1,24 +1,75 @@
 # Gaming Club — Booking System
 
-MVP of an online seat booking system for a gaming club. Admin panel: booking calendar, booking management, places, categories, rooms, and clients.
+Online seat booking system for a gaming club (MVP). Clients will be able to book seats and rooms by date and time; the administrator manages the entire schedule through the admin panel.
 
-## Stack
+**Current status:** admin panel — done. Client-facing site — next phase.
+
+---
+
+## How to use the admin panel
+
+Open `/admin` and sign in (default MVP credentials: `admin` / `admin` — change these before real use, see [Environment variables](#environment-variables)).
+
+### Calendar
+
+The main screen. Shows all bookings for one day: **columns are places** (seats and VIP rooms), **rows are hours** (00:00–24:00, Tashkent time).
+
+- Switch days with the **← / →** buttons, the date picker, or **Today**
+- **Click an empty cell** to create a booking — the place and time are pre-filled
+- **Click a booking block** to see its details or cancel it
+
+### Bookings
+
+Full list of all bookings, newest first.
+
+- **Filters**: by date, place, room, and status (Active / Cancelled)
+- **+ New booking**: pick a client, place, date, start time, and duration — the total price is calculated automatically from the place's hourly rate
+- **Cancel**: click Cancel on a row, optionally enter a reason
+- A place cannot be double-booked: if the time overlaps an existing active booking, the system rejects it with "This time slot is already booked". This is enforced by the database itself, so it holds even if two people click at the same moment
+- Cancelled bookings free up the slot immediately
+
+### Places
+
+Every bookable unit in the club — regular seats and whole VIP rooms.
+
+- Each place has a **name**, **type** (Seat / Whole room), **category** (pricing tier), optional **room** (physical zone), **price per hour**, and **status**
+- **Disable** a place to remove it from the calendar and stop new bookings (e.g. broken PC) — this is the recommended way to take a place out of rotation
+- **Delete** only works for places that have never been booked; otherwise disable instead
+
+### Categories
+
+Pricing tiers (Standard / Premium / VIP by default). Each has a default hourly price used as a starting point when creating new places. Categories with places in them cannot be deleted.
+
+### Rooms
+
+Physical zones of the club (e.g. Main Hall, VIP Zone) used to group places and filter bookings. Rooms with places in them cannot be deleted.
+
+### Clients
+
+All club clients with search by name or phone.
+
+- **+ New client**: name + phone number (phone must be unique). You can also add a client on the fly from inside the new-booking form
+- Click a client's name to see their profile and full **booking history**
+
+---
+
+## Tech stack
 
 - **Next.js 16** (App Router, TypeScript) + Tailwind CSS
 - **PostgreSQL** (Neon) + Prisma 7
-- Deployment: **Vercel**
+- Hosting: **Vercel** — every push to `main` deploys automatically
 
 ## Local setup
 
 ```bash
 npm install
-cp .env.example .env   # fill in DATABASE_URL and the other variables
+cp .env.example .env   # fill in the variables (see below)
 npx prisma migrate deploy
-npm run db:seed        # demo data
+npm run db:seed        # demo data: 10 places, 5 clients, 8 bookings
 npm run dev
 ```
 
-Admin panel: `http://localhost:3000/admin` (credentials from `.env`).
+Admin panel: `http://localhost:3000/admin`
 
 ## Environment variables
 
@@ -29,8 +80,12 @@ Admin panel: `http://localhost:3000/admin` (credentials from `.env`).
 | `ADMIN_PASSWORD` | Admin password |
 | `SESSION_SECRET` | Random 32+ char string used to sign the session cookie |
 
+Set the same four variables in Vercel → Project → Settings → Environment Variables when deploying.
+
 ## Double-booking protection
 
-Overlapping active bookings for the same place are impossible at the database level
-(exclusion constraint `no_overlapping_active_bookings` using the `btree_gist` extension),
-backed by a friendly application-level availability check.
+Overlapping active bookings for the same place are impossible at the database level — a Postgres exclusion constraint (`no_overlapping_active_bookings`, `btree_gist` extension) rejects them even under concurrent requests. The app also pre-checks availability to show a friendly error before the constraint is ever hit.
+
+## Out of MVP scope (planned later)
+
+Online payment (Uzcard / Humo / Visa / Mastercard), SMS notifications, staff roles, loyalty program, analytics, mobile app.
