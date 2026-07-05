@@ -26,3 +26,13 @@ export function calcTotalPrice(pricePerHour: number, startsAt: Date, endsAt: Dat
   const hours = (endsAt.getTime() - startsAt.getTime()) / 3_600_000;
   return Math.round(pricePerHour * hours * 100) / 100;
 }
+
+export const CONFLICT_MESSAGE = "This time slot is already booked";
+
+/** True when the error is the Postgres booking-overlap exclusion constraint firing. */
+export function isExclusionViolation(e: unknown): boolean {
+  const message = e instanceof Error ? e.message : String(e);
+  return (
+    message.includes("no_overlapping_active_bookings") || message.includes("23P01")
+  );
+}

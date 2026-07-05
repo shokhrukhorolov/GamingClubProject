@@ -20,6 +20,10 @@ export default async function ClientDetailPage({
         orderBy: { startsAt: "desc" },
         include: bookingInclude,
       },
+      balanceTransactions: {
+        orderBy: { createdAt: "desc" },
+        take: 50,
+      },
     },
   });
 
@@ -40,6 +44,14 @@ export default async function ClientDetailPage({
           createdAt: client.createdAt.toISOString(),
         }}
         bookings={client.bookings.map(toBookingDTO)}
+        balance={Number(client.balance)}
+        transactions={client.balanceTransactions.map((t) => ({
+          id: t.id,
+          type: t.type,
+          amount: Number(t.amount),
+          note: t.note,
+          createdAt: t.createdAt.toISOString(),
+        }))}
       />
     </>
   );

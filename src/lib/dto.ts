@@ -34,6 +34,16 @@ export type ClientDTO = {
   phone: string;
   bookingsCount: number;
   createdAt: string;
+  balance: number;
+  email: string | null;
+};
+
+export type BalanceTransactionDTO = {
+  id: string;
+  type: "TOPUP_ADMIN" | "BOOKING_CHARGE" | "BOOKING_REFUND";
+  amount: number;
+  note: string | null;
+  createdAt: string;
 };
 
 export type BookingDTO = {

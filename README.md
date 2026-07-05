@@ -1,8 +1,19 @@
 # Gaming Club Booking System
 
-Online seat booking system for a gaming club (MVP). Clients will be able to book seats and rooms by date and time. The administrator manages the entire schedule through the admin panel.
+Online seat booking system for a gaming club (MVP). Clients book seats and rooms by date and time and pay from their account balance. The administrator manages the entire schedule through the admin panel.
 
-**Current status:** admin panel is done. Client-facing site is the next phase.
+**Current status:** admin panel and client-facing site are done. Online payments are the next phase (balance top-up is manual for now).
+
+---
+
+## How the client site works
+
+- **Home page (`/`)**: club categories with prices; pick one and hit Book
+- **Sign up (`/register`)**: full name + phone number + password (email optional). Phone is the sign-in ID
+- **Book (`/book`)**: choose category, date, time, and hours; see every free place with the total price; confirm to pay from your balance
+- **My account (`/account`)**: profile, balance with transaction history, and your bookings. Cancel an upcoming booking and the full amount returns to your balance instantly
+- **Balance**: bookings are paid from the account balance. Top up at the club desk (staff adds it in the admin panel); online payment with Uzcard / Humo / Visa / Mastercard is coming later
+- Booking rules: up to 30 days ahead, 1-12 hours, max 3 upcoming bookings per account
 
 ---
 
@@ -62,7 +73,7 @@ All club clients with search by name or phone.
 | Database | PostgreSQL on Neon (serverless, free tier) | All data: places, bookings, clients |
 | ORM | Prisma 7 (`@prisma/adapter-pg`) | Type-safe database access and migrations |
 | Validation | Zod | Validates every form input on the server |
-| Auth | jose (JWT), httpOnly signed cookie | Admin session, route protection via Next.js proxy |
+| Auth | jose (JWT) + bcryptjs, httpOnly signed cookies | Separate admin and client sessions, route protection via Next.js proxy |
 | Dates | date-fns + date-fns-tz | All times stored in UTC, displayed in Asia/Tashkent |
 | Hosting | Vercel | Every push to `main` deploys automatically |
 | Integrity | Postgres `btree_gist` exclusion constraint | Makes double-booking physically impossible in the DB |
@@ -71,8 +82,7 @@ All club clients with search by name or phone.
 
 | Phase | Technology / Feature |
 |---|---|
-| Client site (phase 2) | Same Next.js app: public booking pages, phone number registration and login, seat picker with prices, booking history |
-| Payments (post-MVP) | Uzcard, Humo, Visa, Mastercard online payment |
+| Payments (next) | Uzcard, Humo, Visa, Mastercard online balance top-up |
 | Notifications (post-MVP) | SMS notifications (booking confirmation, reminders) |
 | Later | Staff roles and permissions, loyalty program and promo codes, analytics and reports, mobile app |
 

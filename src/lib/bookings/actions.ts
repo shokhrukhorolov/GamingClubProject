@@ -5,7 +5,13 @@ import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth/require-admin";
 import { ActionResult, ok, fail } from "@/lib/action-result";
-import { findConflict, calcTotalPrice } from "@/lib/bookings/availability";
+import {
+  findConflict,
+  calcTotalPrice,
+  isExclusionViolation,
+  CONFLICT_MESSAGE,
+} from "@/lib/bookings/availability";
+import { cancelBookingWithRefund } from "@/lib/bookings/cancel";
 import { clubTimeToDate } from "@/lib/format";
 
 const createBookingSchema = z.object({
@@ -23,15 +29,6 @@ function revalidate() {
   revalidatePath("/admin/bookings");
   revalidatePath("/admin/calendar");
   revalidatePath("/admin/clients");
-}
-
-const CONFLICT_MESSAGE = "This time slot is already booked";
-
-function isExclusionViolation(e: unknown): boolean {
-  const message = e instanceof Error ? e.message : String(e);
-  return (
-    message.includes("no_overlapping_active_bookings") || message.includes("23P01")
-  );
 }
 
 export async function createBooking(input: unknown): Promise<ActionResult> {
@@ -85,18 +82,13 @@ export async function cancelBooking(
 ): Promise<ActionResult> {
   await requireAdmin();
 
-  const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
-  if (!booking) return fail("Booking not found");
-  if (booking.status === "CANCELLED") return fail("Booking is already cancelled");
-
-  await prisma.booking.update({
-    where: { id: bookingId },
-    data: {
-      status: "CANCELLED",
-      cancelledAt: new Date(),
-      cancelReason: reason?.trim() || null,
-    },
-  });
+  // client-paid bookings are refunded to the client's balance inside the helper
+  const outcome = await cancelBookingWithRefund(bookingId, reason);
+  if (!outcome.ok) {
+    return fail(
+      outcome.error === "not_found" ? "Booking not found" : "Booking is already cancelled"
+    );
+  }
 
   revalidate();
   return ok();

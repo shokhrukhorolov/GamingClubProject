@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, THead, TH, TBody, TD, EmptyRow } from "@/components/ui/table";
 import { ClientFormModal } from "./client-form-modal";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatMoney } from "@/lib/format";
 
 export function ClientsList({ clients }: { clients: ClientDTO[] }) {
   const router = useRouter();
@@ -41,12 +41,13 @@ export function ClientsList({ clients }: { clients: ClientDTO[] }) {
         <THead>
           <TH>Name</TH>
           <TH>Phone</TH>
+          <TH>Balance</TH>
           <TH>Bookings</TH>
           <TH>Registered</TH>
         </THead>
         <TBody>
           {clients.length === 0 ? (
-            <EmptyRow colSpan={4} message="No clients found" />
+            <EmptyRow colSpan={5} message="No clients found" />
           ) : (
             clients.map((client) => (
               <tr key={client.id} className="hover:bg-gray-50">
@@ -59,6 +60,9 @@ export function ClientsList({ clients }: { clients: ClientDTO[] }) {
                   </Link>
                 </TD>
                 <TD>{client.phone}</TD>
+                <TD className="font-medium text-gray-900">
+                  {formatMoney(client.balance)}
+                </TD>
                 <TD>{client.bookingsCount}</TD>
                 <TD>{formatDate(new Date(client.createdAt))}</TD>
               </tr>

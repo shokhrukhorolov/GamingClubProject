@@ -34,6 +34,8 @@ export default async function ClientsPage({
           phone: c.phone,
           bookingsCount: c._count.bookings,
           createdAt: c.createdAt.toISOString(),
+          balance: Number(c.balance),
+          email: c.email,
         }))}
       />
     </>

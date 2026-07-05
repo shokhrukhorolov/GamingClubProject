@@ -28,6 +28,12 @@ enum BookingSource {
   ADMIN
 }
 
+enum BalanceTransactionType {
+  TOPUP_ADMIN
+  BOOKING_CHARGE
+  BOOKING_REFUND
+}
+
 model Room {
   id          String   @id @default(cuid())
   name        String
@@ -77,15 +83,39 @@ model Place {
 }
 
 model Client {
-  id        String   @id @default(cuid())
-  name      String
-  phone     String   @unique
+  id           String  @id @default(cuid())
+  name         String
+  phone        String  @unique
+  email        String?
+  passwordHash String?
+  balance      Decimal @default(0) @db.Decimal(12, 2)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  bookings Booking[]
+  bookings            Booking[]
+  balanceTransactions BalanceTransaction[]
 
   @@map("clients")
+}
+
+model BalanceTransaction {
+  id String @id @default(cuid())
+
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id], onDelete: Restrict)
+
+  bookingId String?
+  booking   Booking? @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+
+  type   BalanceTransactionType
+  amount Decimal                @db.Decimal(12, 2) // signed: credit +, debit -
+  note   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([clientId, createdAt])
+  @@map("balance_transactions")
 }
 
 model Booking {
@@ -111,6 +141,8 @@ model Booking {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  balanceTransactions BalanceTransaction[]
 
   @@index([placeId, startsAt, endsAt])
   @@index([clientId])

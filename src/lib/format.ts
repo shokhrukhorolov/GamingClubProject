@@ -32,3 +32,8 @@ export function clubTimeToDate(date: string, time: string): Date {
 export function clubDayStart(date: string): Date {
   return fromZonedTime(`${date}T00:00:00`, CLUB_TIMEZONE);
 }
+
+/** Current time in ms. Server Components fetch fresh data per request, so reading the clock is safe there. */
+export function nowMs(): number {
+  return Date.now();
+}

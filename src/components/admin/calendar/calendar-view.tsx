@@ -107,7 +107,7 @@ export function CalendarView({ date, dayStartISO, places, bookings, clients }: P
 
       {places.length === 0 ? (
         <p className="rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-          No active places. Add places in the "Places" section.
+          No active places. Add places in the &quot;Places&quot; section.
         </p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
