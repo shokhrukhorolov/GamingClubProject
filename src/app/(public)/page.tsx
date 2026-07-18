@@ -5,18 +5,30 @@ import { getDictionary } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
+const CLUB_GRADIENTS = [
+  "from-violet-500 to-fuchsia-600",
+  "from-indigo-500 to-sky-500",
+  "from-fuchsia-500 to-rose-500",
+];
+
 export default async function HomePage() {
   const t = await getDictionary();
 
-  const categories = await prisma.category.findMany({
-    orderBy: { sortOrder: "asc" },
-    include: {
-      places: {
-        where: { status: "ACTIVE" },
-        select: { pricePerHour: true },
+  const [categories, clubs] = await Promise.all([
+    prisma.category.findMany({
+      orderBy: { sortOrder: "asc" },
+      include: {
+        places: {
+          where: { status: "ACTIVE" },
+          select: { pricePerHour: true },
+        },
       },
-    },
-  });
+    }),
+    prisma.club.findMany({
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+      take: 3,
+    }),
+  ]);
 
   const steps = [
     { title: t.home.step1Title, text: t.home.step1Text },
@@ -102,8 +114,68 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* how it works */}
+      {/* clubs preview */}
       <section className="border-t border-gray-200 bg-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+          <h2 className="text-center text-2xl font-bold text-gray-900 sm:text-3xl">
+            {t.home.clubsTitle}
+          </h2>
+          <p className="mt-2 text-center text-gray-500">{t.home.clubsSubtitle}</p>
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {clubs.map((club, i) => {
+              const active = club.status === "ACTIVE";
+              const card = (
+                <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+                  <div
+                    className={`relative h-32 bg-gradient-to-br ${CLUB_GRADIENTS[i % CLUB_GRADIENTS.length]}`}
+                  >
+                    <span className="absolute left-3 top-3 rounded-md bg-black/30 px-2 py-0.5 text-xs font-semibold text-white backdrop-blur">
+                      {club.city}
+                    </span>
+                    {!active ? (
+                      <span className="absolute right-3 top-3 rounded-md bg-white/90 px-2 py-0.5 text-xs font-semibold text-gray-700">
+                        {t.common.comingSoon}
+                      </span>
+                    ) : club.rating !== null ? (
+                      <span className="absolute right-3 top-3 rounded-md bg-white/90 px-2 py-0.5 text-xs font-semibold text-gray-700">
+                        ★ {Number(club.rating).toFixed(1)}
+                      </span>
+                    ) : null}
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <h3 className="font-semibold text-gray-900">{club.name}</h3>
+                    {club.address ? (
+                      <p className="mt-0.5 text-sm text-gray-500">{club.address}</p>
+                    ) : null}
+                  </div>
+                </div>
+              );
+              return active ? (
+                <Link key={club.id} href={`/clubs/${club.slug}`}>
+                  {card}
+                </Link>
+              ) : (
+                <div key={club.id} className="opacity-90">
+                  {card}
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/clubs"
+              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+            >
+              {t.home.seeMore} →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* how it works */}
+      <section className="border-t border-gray-200 bg-gray-50">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-center text-2xl font-bold text-gray-900">
             {t.home.howItWorks}
