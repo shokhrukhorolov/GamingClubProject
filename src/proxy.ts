@@ -5,7 +5,7 @@ import {
   CLIENT_SESSION_COOKIE,
 } from "@/lib/auth/client-session";
 
-const CLIENT_GATED = ["/account", "/book"];
+const CLIENT_GATED = ["/account"];
 
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -42,7 +42,5 @@ export const config = {
     "/admin",
     "/account/:path*",
     "/account",
-    "/book/:path*",
-    "/book",
   ],
 };

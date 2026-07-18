@@ -25,6 +25,10 @@ const createSchema = z.object({
   durationHours: z.coerce
     .number()
     .refine((v) => DURATION_CHOICES.includes(v), "Invalid duration"),
+  paymentMethod: z
+    .enum(["UZUM", "CLICK", "PAYME", "CASH"])
+    .optional()
+    .default("CASH"),
   snacks: z
     .array(
       z.object({
@@ -50,7 +54,7 @@ export async function createClientBooking(input: unknown): Promise<ActionResult>
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0].message);
 
-  const { placeId, date, time, durationHours, snacks } = parsed.data;
+  const { placeId, date, time, durationHours, snacks, paymentMethod } = parsed.data;
   const startsAt = clubTimeToDate(date, time);
   const endsAt = new Date(startsAt.getTime() + durationHours * 3_600_000);
   const now = Date.now();
@@ -113,6 +117,7 @@ export async function createClientBooking(input: unknown): Promise<ActionResult>
         totalPrice,
         status: "ACTIVE",
         source: "CLIENT",
+        paymentMethod,
         snacks: snackRows.length
           ? { create: snackRows }
           : undefined,

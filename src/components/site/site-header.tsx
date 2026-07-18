@@ -22,12 +22,6 @@ export async function SiteHeader() {
           >
             {t.nav.clubs}
           </Link>
-          <Link
-            href="/book"
-            className="hidden text-sm font-medium text-gray-600 hover:text-gray-900 sm:block"
-          >
-            {t.nav.bookSeat}
-          </Link>
           <LocaleSwitcher />
           {clientId ? (
             <>

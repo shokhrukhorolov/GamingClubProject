@@ -57,11 +57,17 @@ export function BookingsTable({
             bookings.map((booking) => (
               <tr key={booking.id} className="hover:bg-gray-50">
                 <TD>
-                  <div className="font-medium text-gray-900">{booking.placeName}</div>
-                  <div className="text-xs text-gray-500">
-                    {booking.categoryName}
-                    {booking.roomName ? ` · ${booking.roomName}` : ""}
+                  <div className="font-medium text-gray-900">
+                    {booking.clubName ?? "—"}
                   </div>
+                  <div className="text-xs text-gray-500">
+                    {booking.placeName} · {booking.categoryName}
+                  </div>
+                  {booking.paymentMethod ? (
+                    <div className="text-xs text-gray-400">
+                      {booking.paymentMethod}
+                    </div>
+                  ) : null}
                   {booking.snacks.length > 0 ? (
                     <div className="mt-1 text-xs text-amber-700">
                       🍿 {booking.snacks.map((s) => `${s.name} ×${s.quantity}`).join(", ")}

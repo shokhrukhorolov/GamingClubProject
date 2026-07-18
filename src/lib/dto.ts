@@ -58,6 +58,7 @@ export type BookingDTO = {
   placeId: string;
   placeName: string;
   roomName: string | null;
+  clubName: string | null;
   categoryName: string;
   clientId: string;
   clientName: string;
@@ -67,6 +68,7 @@ export type BookingDTO = {
   totalPrice: number;
   status: "ACTIVE" | "CANCELLED";
   source: "CLIENT" | "ADMIN";
+  paymentMethod: string | null;
   cancelReason: string | null;
   snacks: BookingSnackDTO[];
 };

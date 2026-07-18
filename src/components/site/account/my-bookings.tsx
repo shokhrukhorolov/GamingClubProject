@@ -32,8 +32,11 @@ function BookingRow({
     <li className="flex flex-wrap items-center justify-between gap-3 py-3">
       <div>
         <div className="font-medium text-gray-900">
+          {booking.clubName ?? booking.placeName}
+        </div>
+        <div className="text-xs text-indigo-600">
           {booking.placeName}
-          {booking.roomName ? ` (${booking.roomName})` : ""}
+          {booking.categoryName ? ` · ${booking.categoryName}` : ""}
         </div>
         <div className="text-sm text-gray-500">
           {formatDateTime(new Date(booking.startsAt))} –{" "}

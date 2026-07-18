@@ -3,14 +3,14 @@ import { Prisma } from "@/generated/prisma/client";
 
 export type BookingWithRelations = Prisma.BookingGetPayload<{
   include: {
-    place: { include: { category: true; room: true } };
+    place: { include: { category: true; room: true; club: true } };
     client: true;
     snacks: { include: { snack: true } };
   };
 }>;
 
 export const bookingInclude = {
-  place: { include: { category: true, room: true } },
+  place: { include: { category: true, room: true, club: true } },
   client: true,
   snacks: { include: { snack: true } },
 } as const;
@@ -21,6 +21,7 @@ export function toBookingDTO(b: BookingWithRelations): BookingDTO {
     placeId: b.placeId,
     placeName: b.place.name,
     roomName: b.place.room?.name ?? null,
+    clubName: b.place.club?.name ?? null,
     categoryName: b.place.category.name,
     clientId: b.clientId,
     clientName: b.client.name,
@@ -30,6 +31,7 @@ export function toBookingDTO(b: BookingWithRelations): BookingDTO {
     totalPrice: Number(b.totalPrice),
     status: b.status,
     source: b.source,
+    paymentMethod: b.paymentMethod,
     cancelReason: b.cancelReason,
     snacks: b.snacks.map((s) => ({
       id: s.id,

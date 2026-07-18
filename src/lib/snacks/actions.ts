@@ -15,7 +15,7 @@ const snackSchema = z.object({
 
 function revalidate() {
   revalidatePath("/admin/snacks");
-  revalidatePath("/book");
+  revalidatePath("/clubs");
 }
 
 export async function createSnack(input: unknown): Promise<ActionResult> {

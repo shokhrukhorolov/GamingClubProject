@@ -49,7 +49,7 @@ export default async function HomePage() {
           </p>
           <div className="mt-8 flex justify-center gap-3">
             <Link
-              href="/book"
+              href="/clubs"
               className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-500"
             >
               {t.home.bookNow}
@@ -103,7 +103,7 @@ export default async function HomePage() {
                   <span className="text-sm text-gray-500">{t.common.perHour}</span>
                 </div>
                 <Link
-                  href={`/book?category=${category.id}`}
+                  href="/clubs"
                   className="mt-6 rounded-lg bg-indigo-600 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-indigo-500"
                 >
                   {t.home.bookNow}
