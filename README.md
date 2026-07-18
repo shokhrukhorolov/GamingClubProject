@@ -1,18 +1,18 @@
-# Gaming Club Booking System
+# gPoint Booking System
 
-Online seat booking system for a gaming club (MVP). Clients book seats and rooms by date and time and pay from their account balance. The administrator manages the entire schedule through the admin panel.
+Online seat booking system for the gPoint gaming clubs (MVP). Clients book seats and rooms by date and time; the administrator manages the whole schedule through the admin panel. The public site is **Russian by default with an English toggle**.
 
-**Current status:** admin panel and client-facing site are done. Online payments are the next phase (balance top-up is manual for now).
+**Current status:** admin panel and client-facing site are done. Bookings are free reservations (pay at the club); online payments are a future phase.
 
 ---
 
 ## How the client site works
 
-- **Home page (`/`)**: club categories with prices; pick one and hit Book
+- **Home page (`/`)**: gPoint branding, club categories with prices; pick one and hit Book. Language switch RU/EN in the header (Russian is the default for new visitors)
+- **Clubs (`/clubs`)**: directory of gPoint clubs in Tashkent — the flagship is bookable, others are "coming soon" placeholders (only admins add clubs). Each active club has an **Airbnb-style availability view**: pick a date and see the free time windows for every place
 - **Sign up (`/register`)**: full name + phone number + password (email optional). Phone is the sign-in ID
-- **Book (`/book`)**: choose category, date, time, and hours; see every free place with the total price; confirm to pay from your balance
-- **My account (`/account`)**: profile, balance with transaction history, and your bookings. Cancel an upcoming booking and the full amount returns to your balance instantly
-- **Balance**: bookings are paid from the account balance. Top up at the club desk (staff adds it in the admin panel); online payment with Uzcard / Humo / Visa / Mastercard is coming later
+- **Book (`/book`)**: choose category, date, time, and hours; see every free place with the price; an **"Add some snacks?"** step lets you add drinks/snacks (Cola, Snickers, …); confirm to reserve. **No online payment — you pay at the club**
+- **My account (`/account`)**: profile and your bookings (with any snacks). Cancel an upcoming booking to free the slot
 - Booking rules: up to 30 days ahead, 1-12 hours, max 3 upcoming bookings per account
 
 ---
@@ -54,6 +54,14 @@ Pricing tiers (Standard / Premium / VIP by default). Each has a default hourly p
 ### Rooms
 
 Physical zones of the club (e.g. Main Hall, VIP Zone) used to group places and filter bookings. Rooms with places in them cannot be deleted.
+
+### Snacks
+
+The drinks & snacks catalogue clients can add to a booking (Cola, Fanta, Water, Red Bull, Snickers, …). Add items with a price, hide ones that are out of stock, or delete unused ones. Snacks chosen during booking appear on the booking in the admin (🍿) and on the client's account.
+
+### Clubs
+
+The gPoint locations shown on the public `/clubs` page. Create/edit clubs with name, city, address, rating, and status (**Active** = bookable flagship, **Coming soon** = placeholder). Exactly one club is the bookable "Main" club.
 
 ### Clients
 

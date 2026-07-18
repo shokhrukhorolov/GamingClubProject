@@ -5,10 +5,9 @@ export type CancelOutcome =
   | { ok: false; error: "not_found" | "already_cancelled" };
 
 /**
- * Cancels a booking. CLIENT-sourced bookings were paid from the client's
- * balance, so cancelling refunds the full amount (MVP policy) and writes a
- * BOOKING_REFUND ledger row. ADMIN-sourced bookings never touched the balance
- * (paid at the desk), so they are just flipped to CANCELLED.
+ * Cancels a booking. Bookings no longer charge the balance (free reservations),
+ * but LEGACY bookings that carry a BOOKING_CHARGE ledger row are refunded in full
+ * when cancelled. New bookings have no charge, so cancelling just flips the status.
  */
 export async function cancelBookingWithRefund(
   bookingId: string,
@@ -17,6 +16,13 @@ export async function cancelBookingWithRefund(
   const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
   if (!booking) return { ok: false, error: "not_found" };
   if (booking.status === "CANCELLED") return { ok: false, error: "already_cancelled" };
+
+  // sum of charges already applied to this booking (negative amounts)
+  const charged = await prisma.balanceTransaction.aggregate({
+    where: { bookingId, type: "BOOKING_CHARGE" },
+    _sum: { amount: true },
+  });
+  const refund = -Number(charged._sum.amount ?? 0); // positive amount to give back
 
   await prisma.$transaction(async (tx) => {
     await tx.booking.update({
@@ -28,8 +34,7 @@ export async function cancelBookingWithRefund(
       },
     });
 
-    if (booking.source === "CLIENT") {
-      const refund = Number(booking.totalPrice);
+    if (refund > 0) {
       await tx.client.update({
         where: { id: booking.clientId },
         data: { balance: { increment: refund } },

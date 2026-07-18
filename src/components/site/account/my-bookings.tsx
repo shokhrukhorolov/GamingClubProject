@@ -8,12 +8,24 @@ import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { FieldError } from "@/components/ui/input";
 import { formatMoney, formatDateTime, formatTime } from "@/lib/format";
+import { useT } from "@/lib/i18n/client";
+
+function SnacksLine({ booking }: { booking: BookingDTO }) {
+  if (booking.snacks.length === 0) return null;
+  return (
+    <div className="mt-1 text-xs text-gray-400">
+      {booking.snacks.map((s) => `${s.name} ×${s.quantity}`).join(", ")}
+    </div>
+  );
+}
 
 function BookingRow({
   booking,
+  labels,
   onCancel,
 }: {
   booking: BookingDTO;
+  labels: { active: string; cancelled: string; cancel: string };
   onCancel?: (b: BookingDTO) => void;
 }) {
   return (
@@ -27,12 +39,13 @@ function BookingRow({
           {formatDateTime(new Date(booking.startsAt))} –{" "}
           {formatTime(new Date(booking.endsAt))} · {formatMoney(booking.totalPrice)}
         </div>
+        <SnacksLine booking={booking} />
       </div>
       <div className="flex items-center gap-2">
         {booking.status === "ACTIVE" ? (
-          <Badge tone="green">Active</Badge>
+          <Badge tone="green">{labels.active}</Badge>
         ) : (
-          <Badge tone="red">Cancelled</Badge>
+          <Badge tone="red">{labels.cancelled}</Badge>
         )}
         {onCancel ? (
           <Button
@@ -40,7 +53,7 @@ function BookingRow({
             className="text-red-600 hover:bg-red-50"
             onClick={() => onCancel(booking)}
           >
-            Cancel
+            {labels.cancel}
           </Button>
         ) : null}
       </div>
@@ -55,9 +68,16 @@ export function MyBookings({
   upcoming: BookingDTO[];
   past: BookingDTO[];
 }) {
+  const t = useT();
   const [cancelling, setCancelling] = useState<BookingDTO | null>(null);
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
+
+  const labels = {
+    active: t.account.active,
+    cancelled: t.account.cancelled,
+    cancel: t.account.cancel,
+  };
 
   const close = () => {
     setCancelling(null);
@@ -75,17 +95,15 @@ export function MyBookings({
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <h2 className="text-base font-semibold text-gray-900">My bookings</h2>
+      <h2 className="text-base font-semibold text-gray-900">{t.account.myBookings}</h2>
 
-      <h3 className="mt-4 text-sm font-medium text-gray-500">Upcoming</h3>
+      <h3 className="mt-4 text-sm font-medium text-gray-500">{t.account.upcoming}</h3>
       {upcoming.length === 0 ? (
-        <p className="mt-1 text-sm text-gray-400">
-          No upcoming bookings — time to fix that!
-        </p>
+        <p className="mt-1 text-sm text-gray-400">{t.account.noUpcoming}</p>
       ) : (
         <ul className="mt-1 divide-y divide-gray-100">
           {upcoming.map((b) => (
-            <BookingRow key={b.id} booking={b} onCancel={setCancelling} />
+            <BookingRow key={b.id} booking={b} labels={labels} onCancel={setCancelling} />
           ))}
         </ul>
       )}
@@ -93,34 +111,32 @@ export function MyBookings({
       {past.length > 0 ? (
         <>
           <h3 className="mt-6 text-sm font-medium text-gray-500">
-            Past & cancelled
+            {t.account.pastCancelled}
           </h3>
           <ul className="mt-1 divide-y divide-gray-100">
             {past.map((b) => (
-              <BookingRow key={b.id} booking={b} />
+              <BookingRow key={b.id} booking={b} labels={labels} />
             ))}
           </ul>
         </>
       ) : null}
 
-      <Modal open={cancelling !== null} onClose={close} title="Cancel booking?">
+      <Modal open={cancelling !== null} onClose={close} title={t.account.cancelTitle}>
         {cancelling ? (
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              {cancelling.placeName},{" "}
-              {formatDateTime(new Date(cancelling.startsAt))}
+              {cancelling.placeName}, {formatDateTime(new Date(cancelling.startsAt))}
             </p>
-            <p className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
-              The full amount ({formatMoney(cancelling.totalPrice)}) will be
-              refunded to your balance.
+            <p className="rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-600">
+              {t.account.cancelNote}
             </p>
             <FieldError message={error} />
             <div className="flex justify-end gap-2">
               <Button variant="secondary" onClick={close}>
-                Keep booking
+                {t.account.keepBooking}
               </Button>
               <Button variant="danger" onClick={confirmCancel} disabled={pending}>
-                {pending ? "Cancelling..." : "Cancel booking"}
+                {pending ? t.account.cancelling : t.account.cancelBooking}
               </Button>
             </div>
           </div>

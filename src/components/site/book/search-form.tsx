@@ -3,6 +3,7 @@
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/lib/i18n/client";
 
 const DURATIONS = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12];
 
@@ -13,6 +14,7 @@ export function SearchForm({
   categories: { id: string; name: string }[];
   defaults: { category: string; date: string; time: string; duration: string };
 }) {
+  const t = useT();
   return (
     <form
       method="get"
@@ -21,7 +23,7 @@ export function SearchForm({
     >
       <div className="col-span-2 sm:col-span-1 lg:col-span-2">
         <label className="mb-1 block text-xs font-medium text-gray-500">
-          Category
+          {t.book.category}
         </label>
         <Select name="category" defaultValue={defaults.category} required>
           {categories.map((c) => (
@@ -32,11 +34,15 @@ export function SearchForm({
         </Select>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">Date</label>
+        <label className="mb-1 block text-xs font-medium text-gray-500">
+          {t.common.date}
+        </label>
         <Input type="date" name="date" defaultValue={defaults.date} required />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-500">Time</label>
+        <label className="mb-1 block text-xs font-medium text-gray-500">
+          {t.common.time}
+        </label>
         <Input
           type="time"
           name="time"
@@ -48,7 +54,7 @@ export function SearchForm({
       <div className="col-span-2 flex items-end gap-3 sm:col-span-1">
         <div className="flex-1">
           <label className="mb-1 block text-xs font-medium text-gray-500">
-            Hours
+            {t.common.hours}
           </label>
           <Select name="duration" defaultValue={defaults.duration}>
             {DURATIONS.map((d) => (
@@ -59,7 +65,7 @@ export function SearchForm({
           </Select>
         </div>
         <Button type="submit" className="shrink-0">
-          Search
+          {t.common.search}
         </Button>
       </div>
     </form>

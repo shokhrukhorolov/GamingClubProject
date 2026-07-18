@@ -6,6 +6,7 @@ import { useState, useTransition } from "react";
 import { loginClient, registerClient } from "@/lib/client-auth/actions";
 import { Button } from "@/components/ui/button";
 import { Input, Label, FieldError } from "@/components/ui/input";
+import { useT } from "@/lib/i18n/client";
 
 function safeRedirect(target: string | null): string {
   if (target && target.startsWith("/") && !target.startsWith("/admin")) {
@@ -15,6 +16,7 @@ function safeRedirect(target: string | null): string {
 }
 
 export function LoginForm({ redirect }: { redirect: string | null }) {
+  const t = useT();
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
@@ -37,7 +39,7 @@ export function LoginForm({ redirect }: { redirect: string | null }) {
   return (
     <form action={submit} className="space-y-4">
       <div>
-        <Label htmlFor="login-phone">Phone number</Label>
+        <Label htmlFor="login-phone">{t.auth.phone}</Label>
         <Input
           id="login-phone"
           name="phone"
@@ -48,7 +50,7 @@ export function LoginForm({ redirect }: { redirect: string | null }) {
         />
       </div>
       <div>
-        <Label htmlFor="login-password">Password</Label>
+        <Label htmlFor="login-password">{t.auth.password}</Label>
         <Input
           id="login-password"
           name="password"
@@ -59,15 +61,15 @@ export function LoginForm({ redirect }: { redirect: string | null }) {
       </div>
       <FieldError message={error} />
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Signing in..." : "Sign in"}
+        {pending ? t.auth.signingIn : t.auth.signIn}
       </Button>
       <p className="text-center text-sm text-gray-500">
-        No account yet?{" "}
+        {t.auth.noAccount}{" "}
         <Link
           href={`/register${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""}`}
           className="font-medium text-indigo-600 hover:underline"
         >
-          Sign up
+          {t.auth.signUp}
         </Link>
       </p>
     </form>
@@ -75,6 +77,7 @@ export function LoginForm({ redirect }: { redirect: string | null }) {
 }
 
 export function RegisterForm({ redirect }: { redirect: string | null }) {
+  const t = useT();
   const router = useRouter();
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
@@ -99,11 +102,11 @@ export function RegisterForm({ redirect }: { redirect: string | null }) {
   return (
     <form action={submit} className="space-y-4">
       <div>
-        <Label htmlFor="reg-name">Full name</Label>
+        <Label htmlFor="reg-name">{t.auth.fullName}</Label>
         <Input id="reg-name" name="name" autoComplete="name" required />
       </div>
       <div>
-        <Label htmlFor="reg-phone">Phone number</Label>
+        <Label htmlFor="reg-phone">{t.auth.phone}</Label>
         <Input
           id="reg-phone"
           name="phone"
@@ -114,11 +117,11 @@ export function RegisterForm({ redirect }: { redirect: string | null }) {
         />
       </div>
       <div>
-        <Label htmlFor="reg-email">Email (optional)</Label>
+        <Label htmlFor="reg-email">{t.auth.emailOptional}</Label>
         <Input id="reg-email" name="email" type="email" autoComplete="email" />
       </div>
       <div>
-        <Label htmlFor="reg-password">Password</Label>
+        <Label htmlFor="reg-password">{t.auth.password}</Label>
         <Input
           id="reg-password"
           name="password"
@@ -127,19 +130,19 @@ export function RegisterForm({ redirect }: { redirect: string | null }) {
           minLength={8}
           required
         />
-        <p className="mt-1 text-xs text-gray-400">At least 8 characters</p>
+        <p className="mt-1 text-xs text-gray-400">{t.auth.atLeast8}</p>
       </div>
       <FieldError message={error} />
       <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Creating account..." : "Create account"}
+        {pending ? t.auth.creating : t.auth.createAccount}
       </Button>
       <p className="text-center text-sm text-gray-500">
-        Already have an account?{" "}
+        {t.auth.alreadyHave}{" "}
         <Link
           href={`/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""}`}
           className="font-medium text-indigo-600 hover:underline"
         >
-          Sign in
+          {t.auth.signIn}
         </Link>
       </p>
     </form>

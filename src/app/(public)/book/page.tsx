@@ -4,6 +4,7 @@ import { findAvailablePlaces } from "@/lib/bookings/public-availability";
 import { calcTotalPrice } from "@/lib/bookings/availability";
 import { toPlaceDTO } from "@/lib/places/mappers";
 import { clubTimeToDate, formatDateInput, nowMs } from "@/lib/format";
+import { getDictionary } from "@/lib/i18n/server";
 import { SearchForm } from "@/components/site/book/search-form";
 import { PlaceResults } from "@/components/site/book/place-results";
 
@@ -21,12 +22,17 @@ export default async function BookPage({
     duration?: string;
   }>;
 }) {
-  const clientId = await requireClientId();
+  await requireClientId();
   const params = await searchParams;
+  const t = await getDictionary();
 
-  const categories = await prisma.category.findMany({
-    orderBy: { sortOrder: "asc" },
-  });
+  const [categories, snacks] = await Promise.all([
+    prisma.category.findMany({ orderBy: { sortOrder: "asc" } }),
+    prisma.snack.findMany({
+      where: { isAvailable: true },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
+    }),
+  ]);
 
   const date =
     params.date && /^\d{4}-\d{2}-\d{2}$/.test(params.date)
@@ -54,9 +60,6 @@ export default async function BookPage({
     searched = true;
   }
 
-  const client = await prisma.client.findUnique({ where: { id: clientId } });
-  const balance = Number(client?.balance ?? 0);
-
   const endsAt = startsAt
     ? new Date(startsAt.getTime() + duration * 3_600_000)
     : null;
@@ -73,10 +76,8 @@ export default async function BookPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <h1 className="text-2xl font-bold text-gray-900">Book a seat</h1>
-      <p className="mt-1 text-sm text-gray-500">
-        Pick a category, date and time — we&apos;ll show what&apos;s free
-      </p>
+      <h1 className="text-2xl font-bold text-gray-900">{t.book.title}</h1>
+      <p className="mt-1 text-sm text-gray-500">{t.book.subtitle}</p>
 
       <div className="mt-6">
         <SearchForm
@@ -92,23 +93,28 @@ export default async function BookPage({
 
       <div className="mt-8">
         {!searched ? (
-          <p className="text-center text-sm text-gray-400">
-            Choose your slot above and hit Search
-          </p>
+          <p className="text-center text-sm text-gray-400">{t.book.chooseSlot}</p>
         ) : inPast ? (
           <p className="rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-            That time is in the past — pick a future slot.
+            {t.book.inPast}
           </p>
         ) : results.length === 0 ? (
           <p className="rounded-lg bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
-            No places free at that time. Try another time or category.
+            {t.book.noPlaces}
           </p>
         ) : (
           <PlaceResults
             places={results.map(toPlaceDTO)}
             params={{ date, time, duration }}
             totals={totals}
-            balance={balance}
+            snacks={snacks.map((s) => ({
+              id: s.id,
+              name: s.name,
+              description: s.description,
+              price: Number(s.price),
+              isAvailable: s.isAvailable,
+              sortOrder: s.sortOrder,
+            }))}
           />
         )}
       </div>

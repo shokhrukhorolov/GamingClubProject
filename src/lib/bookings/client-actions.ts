@@ -25,9 +25,16 @@ const createSchema = z.object({
   durationHours: z.coerce
     .number()
     .refine((v) => DURATION_CHOICES.includes(v), "Invalid duration"),
+  snacks: z
+    .array(
+      z.object({
+        snackId: z.string().min(1),
+        quantity: z.coerce.number().int().min(1).max(20),
+      })
+    )
+    .optional()
+    .default([]),
 });
-
-class InsufficientBalanceError extends Error {}
 
 function revalidate() {
   revalidatePath("/account");
@@ -43,7 +50,7 @@ export async function createClientBooking(input: unknown): Promise<ActionResult>
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return fail(parsed.error.issues[0].message);
 
-  const { placeId, date, time, durationHours } = parsed.data;
+  const { placeId, date, time, durationHours, snacks } = parsed.data;
   const startsAt = clubTimeToDate(date, time);
   const endsAt = new Date(startsAt.getTime() + durationHours * 3_600_000);
   const now = Date.now();
@@ -74,44 +81,45 @@ export async function createClientBooking(input: unknown): Promise<ActionResult>
   const pricePerHour = Number(place.pricePerHour);
   const totalPrice = calcTotalPrice(pricePerHour, startsAt, endsAt);
 
+  // resolve requested snacks against the catalogue (price snapshot, availability)
+  const snackRows: { snackId: string; quantity: number; priceSnapshot: number }[] =
+    [];
+  if (snacks.length > 0) {
+    const ids = [...new Set(snacks.map((s) => s.snackId))];
+    const catalogue = await prisma.snack.findMany({
+      where: { id: { in: ids }, isAvailable: true },
+    });
+    const byId = new Map(catalogue.map((s) => [s.id, s]));
+    for (const s of snacks) {
+      const snack = byId.get(s.snackId);
+      if (!snack) continue; // silently drop unavailable snacks
+      snackRows.push({
+        snackId: snack.id,
+        quantity: s.quantity,
+        priceSnapshot: Number(snack.price),
+      });
+    }
+  }
+
+  // No payment/balance charge (MVP): a booking is a free reservation, paid at the club.
   try {
-    await prisma.$transaction(async (tx) => {
-      // conditional decrement doubles as a race-proof insufficient-funds check
-      const paid = await tx.client.updateMany({
-        where: { id: clientId, balance: { gte: totalPrice } },
-        data: { balance: { decrement: totalPrice } },
-      });
-      if (paid.count === 0) throw new InsufficientBalanceError();
-
-      const booking = await tx.booking.create({
-        data: {
-          placeId,
-          clientId,
-          startsAt,
-          endsAt,
-          pricePerHourSnapshot: pricePerHour,
-          totalPrice,
-          status: "ACTIVE",
-          source: "CLIENT",
-        },
-      });
-
-      await tx.balanceTransaction.create({
-        data: {
-          clientId,
-          bookingId: booking.id,
-          type: "BOOKING_CHARGE",
-          amount: -totalPrice,
-        },
-      });
+    await prisma.booking.create({
+      data: {
+        placeId,
+        clientId,
+        startsAt,
+        endsAt,
+        pricePerHourSnapshot: pricePerHour,
+        totalPrice,
+        status: "ACTIVE",
+        source: "CLIENT",
+        snacks: snackRows.length
+          ? { create: snackRows }
+          : undefined,
+      },
     });
   } catch (e) {
-    if (e instanceof InsufficientBalanceError) {
-      return fail(
-        "Insufficient balance. Please top up your account on your profile page."
-      );
-    }
-    // exclusion constraint fired: tx rolled back, balance restored
+    // fallback: the DB exclusion constraint closes the race the pre-check can't
     if (isExclusionViolation(e)) return fail(CONFLICT_MESSAGE);
     throw e;
   }

@@ -4,7 +4,7 @@ import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 export const CLUB_TIMEZONE = "Asia/Tashkent";
 
 export function formatMoney(amount: number): string {
-  return `${new Intl.NumberFormat("en-US").format(amount)} UZS`;
+  return `${new Intl.NumberFormat("ru-RU").format(amount)} сум`;
 }
 
 export function formatDate(date: Date): string {

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gaming Club",
-  description: "Book gaming seats and VIP rooms online at Gaming Club",
+  title: "gPoint",
+  description: "Бронируйте игровые места и VIP-комнаты онлайн в gPoint",
 };
 
 export default function RootLayout({

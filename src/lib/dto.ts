@@ -46,6 +46,13 @@ export type BalanceTransactionDTO = {
   createdAt: string;
 };
 
+export type BookingSnackDTO = {
+  id: string;
+  name: string;
+  quantity: number;
+  priceSnapshot: number;
+};
+
 export type BookingDTO = {
   id: string;
   placeId: string;
@@ -61,4 +68,28 @@ export type BookingDTO = {
   status: "ACTIVE" | "CANCELLED";
   source: "CLIENT" | "ADMIN";
   cancelReason: string | null;
+  snacks: BookingSnackDTO[];
+};
+
+export type SnackDTO = {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  isAvailable: boolean;
+  sortOrder: number;
+};
+
+export type ClubDTO = {
+  id: string;
+  name: string;
+  slug: string;
+  city: string;
+  address: string | null;
+  description: string | null;
+  imageUrl: string | null;
+  rating: number | null;
+  status: "ACTIVE" | "COMING_SOON";
+  isMain: boolean;
+  sortOrder: number;
 };

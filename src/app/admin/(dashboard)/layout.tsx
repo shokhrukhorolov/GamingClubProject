@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { NavSidebar } from "@/components/admin/nav-sidebar";
 
 export const metadata: Metadata = {
-  title: "Gaming Club — Admin Panel",
+  title: "gPoint — Admin Panel",
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

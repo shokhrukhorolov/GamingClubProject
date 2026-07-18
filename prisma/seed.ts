@@ -23,11 +23,66 @@ function at(daysFromToday: number, hour: number, minute = 0): Date {
 async function main() {
   console.log("Seeding...");
 
+  await prisma.bookingSnack.deleteMany();
+  await prisma.balanceTransaction.deleteMany();
   await prisma.booking.deleteMany();
   await prisma.place.deleteMany();
   await prisma.client.deleteMany();
   await prisma.category.deleteMany();
   await prisma.room.deleteMany();
+  await prisma.snack.deleteMany();
+  await prisma.club.deleteMany();
+
+  await prisma.club.createMany({
+    data: [
+      {
+        name: "gPoint Center",
+        slug: "gpoint-center",
+        city: "Tashkent",
+        address: "ул. Шахрисабз, 85",
+        description: "Флагманский игровой клуб gPoint в центре Ташкента.",
+        rating: 4.8,
+        status: "ACTIVE",
+        isMain: true,
+        sortOrder: 1,
+      },
+      {
+        name: "gPoint Yunusabad",
+        slug: "gpoint-yunusabad",
+        city: "Tashkent",
+        address: "Юнусабадский район",
+        description: "Скоро открытие. Премиальные ПК и приставки.",
+        rating: 4.6,
+        status: "COMING_SOON",
+        isMain: false,
+        sortOrder: 2,
+      },
+      {
+        name: "gPoint Chilanzar",
+        slug: "gpoint-chilanzar",
+        city: "Tashkent",
+        address: "Чиланзарский район",
+        description: "Скоро открытие. VIP-комнаты и турнирная зона.",
+        rating: 4.7,
+        status: "COMING_SOON",
+        isMain: false,
+        sortOrder: 3,
+      },
+    ],
+  });
+
+  await prisma.snack.createMany({
+    data: [
+      { name: "Coca-Cola 0.5", price: 12000, sortOrder: 1 },
+      { name: "Fanta 0.5", price: 12000, sortOrder: 2 },
+      { name: "Вода 0.5", price: 6000, sortOrder: 3 },
+      { name: "Red Bull", price: 20000, sortOrder: 4 },
+      { name: "Snickers", price: 10000, sortOrder: 5 },
+      { name: "Lay's чипсы", price: 15000, sortOrder: 6 },
+      { name: "Печенье Oreo", price: 13000, sortOrder: 7 },
+      { name: "Кофе", price: 15000, sortOrder: 8 },
+    ],
+  });
 
   const [standard, premium, vip] = await Promise.all([
     prisma.category.create({

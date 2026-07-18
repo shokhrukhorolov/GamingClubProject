@@ -34,6 +34,61 @@ enum BalanceTransactionType {
   BOOKING_REFUND
 }
 
+enum ClubStatus {
+  ACTIVE
+  COMING_SOON
+}
+
+model Club {
+  id          String     @id @default(cuid())
+  name        String
+  slug        String     @unique
+  city        String     @default("Tashkent")
+  address     String?
+  description String?
+  imageUrl    String?
+  rating      Decimal?   @db.Decimal(2, 1)
+  status      ClubStatus @default(COMING_SOON)
+  isMain      Boolean    @default(false)
+  sortOrder   Int        @default(0)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("clubs")
+}
+
+model Snack {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  imageUrl    String?
+  isAvailable Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookingSnacks BookingSnack[]
+
+  @@map("snacks")
+}
+
+model BookingSnack {
+  id String @id @default(cuid())
+
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  snackId String
+  snack   Snack  @relation(fields: [snackId], references: [id], onDelete: Restrict)
+
+  quantity      Int     @default(1)
+  priceSnapshot Decimal @db.Decimal(10, 2)
+
+  @@index([bookingId])
+  @@map("booking_snacks")
+}
+
 model Room {
   id          String   @id @default(cuid())
   name        String
@@ -143,6 +198,7 @@ model Booking {
   updatedAt DateTime @updatedAt
 
   balanceTransactions BalanceTransaction[]
+  snacks              BookingSnack[]
 
   @@index([placeId, startsAt, endsAt])
   @@index([clientId])

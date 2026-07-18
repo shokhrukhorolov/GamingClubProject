@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/site/auth/auth-forms";
+import { getDictionary } from "@/lib/i18n/server";
 
 export default async function LoginPage({
   searchParams,
@@ -6,13 +7,14 @@ export default async function LoginPage({
   searchParams: Promise<{ redirect?: string }>;
 }) {
   const { redirect } = await searchParams;
+  const t = await getDictionary();
 
   return (
     <div className="mx-auto flex max-w-md flex-col px-4 py-16">
-      <h1 className="text-center text-2xl font-bold text-gray-900">Sign in</h1>
-      <p className="mt-1 text-center text-sm text-gray-500">
-        Welcome back to Gaming Club
-      </p>
+      <h1 className="text-center text-2xl font-bold text-gray-900">
+        {t.auth.signInTitle}
+      </h1>
+      <p className="mt-1 text-center text-sm text-gray-500">{t.auth.welcomeBack}</p>
       <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <LoginForm redirect={redirect ?? null} />
       </div>

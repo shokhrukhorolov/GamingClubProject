@@ -45,3 +45,6 @@ next-env.d.ts
 
 # allow env example
 !.env.example
+
+# project brief (not app code)
+gaming-club-brief.docx

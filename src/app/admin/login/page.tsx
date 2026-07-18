@@ -9,10 +9,10 @@ export default async function LoginPage({
     <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-xl font-bold text-white">
-            GC
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 text-xl font-bold text-white shadow-[0_0_18px_rgba(139,92,246,0.55)]">
+            g
           </div>
-          <h1 className="text-xl font-semibold text-gray-900">Gaming Club</h1>
+          <h1 className="text-xl font-semibold text-gray-900">gPoint</h1>
           <p className="text-sm text-gray-500">Admin Panel</p>
         </div>
 

@@ -62,6 +62,11 @@ export function BookingsTable({
                     {booking.categoryName}
                     {booking.roomName ? ` · ${booking.roomName}` : ""}
                   </div>
+                  {booking.snacks.length > 0 ? (
+                    <div className="mt-1 text-xs text-amber-700">
+                      🍿 {booking.snacks.map((s) => `${s.name} ×${s.quantity}`).join(", ")}
+                    </div>
+                  ) : null}
                 </TD>
                 {showClient ? (
                   <TD>
